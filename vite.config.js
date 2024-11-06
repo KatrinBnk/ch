@@ -13,5 +13,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: '/katrinbnk.github.io/ch/',
+  base: '/ch/',
+  build: {
+    outDir: 'docs',
+  },
 })
