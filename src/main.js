@@ -7,7 +7,7 @@ import ProfilePage from "@/Pages/profilePage.vue";
 
 // Определяем маршруты
 const routes = [
-    { path: '/ch/', component: MainPage },
+    { path: '/katrinbnk.github.io/ch/', component: MainPage },
     { path: '/ch/login', component: LoginPage },
     {path: '/ch/appointments', component: ProfilePage}
 ];
