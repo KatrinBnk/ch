@@ -7,9 +7,9 @@ import ProfilePage from "@/Pages/profilePage.vue";
 
 // Определяем маршруты
 const routes = [
-    { path: '/', component: MainPage },
-    { path: '/login', component: LoginPage },
-    {path: '/appointments', component: ProfilePage}
+    { path: '/ch/', component: MainPage },
+    { path: '/ch/login', component: LoginPage },
+    {path: '/ch/appointments', component: ProfilePage}
 ];
 
 // Создаем экземпляр маршрутизатора
