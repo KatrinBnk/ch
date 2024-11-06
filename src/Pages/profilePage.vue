@@ -29,7 +29,7 @@ export default {
     const isAuthorized = localStorage.getItem("auth") === "true";
 
     if (!isAuthorized || !userId) {
-      this.$router.push("/login");
+      this.$router.push("/ch/login");
     } else {
       this.userId = userId;
     }

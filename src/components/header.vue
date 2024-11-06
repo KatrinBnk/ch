@@ -23,7 +23,7 @@
 
       <!-- Если пользователь авторизован -->
       <template v-if="isAuthorized">
-        <button class="icon-btn">
+        <button class="icon-btn" @click="handleMain">
           <img class="icon" src="@/assets/icons/search2.svg" alt="Поиск">
         </button>
         <button class="icon-btn">
@@ -34,6 +34,7 @@
             :src="user.profilePicture[0] || stubPhoto"
             alt="Аватар пользователя"
             class="user-avatar"
+            @click="handleProfile"
         >
       </template>
 
@@ -62,10 +63,7 @@ export default {
     return {
       selectedAddress: 'Варшавское шоссе 141к9',
       addresses: [
-        'Варшавское шоссе 141к9',
-        'Ленинский проспект 55',
-        'Тверская улица 12',
-        'Пролетарский проспект 21'
+        'Варшавское шоссе 141к9'
       ],
       dropdownVisible: false,
       isAuthorized: false,
@@ -94,13 +92,13 @@ export default {
       this.dropdownVisible = false;
     },
     login() {
-      this.$router.push('/login');
+      this.$router.push('/ch/login');
     },
     handleProfile() {
-      this.$router.push('/appointments');
+      this.$router.push('/ch/appointments');
     },
     handleMain(){
-      this.$router.push('/');
+      this.$router.push('/ch/');
     },
   }
 };
@@ -233,8 +231,8 @@ export default {
 .user-avatar {
   width: 60px;
   height: 60px;
-  border-radius: 50%; /* Делает аватар круглым */
-  object-fit: cover; /* Обеспечивает корректное масштабирование */
+  border-radius: 50%;
+  object-fit: cover;
   cursor: pointer;
 }
 

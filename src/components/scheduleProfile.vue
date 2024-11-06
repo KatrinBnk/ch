@@ -83,10 +83,10 @@ export default {
 }
 
 .profile-picture {
-  width: 50vw; /* Адаптивная ширина */
-  max-width: 300px; /* Максимальная ширина для изображения профиля */
+  width: 50vw;
+  max-width: 300px;
   height: auto;
-  aspect-ratio: 1 / 1; /* Квадратное соотношение сторон */
+  aspect-ratio: 1 / 1;
   border-radius: 8px;
   margin-bottom: 10px;
   background-color: #f0f0f0;

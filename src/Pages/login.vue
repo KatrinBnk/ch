@@ -95,7 +95,7 @@ export default defineComponent({
   created() {
     const isAuthorized = localStorage.getItem("auth") === "true";
     if (isAuthorized) {
-      this.$router.push('/');
+      this.$router.push('/ch/');
     }
   },
   methods: {
@@ -105,7 +105,7 @@ export default defineComponent({
       if (result.success) {
         localStorage.setItem("auth", "true");
         localStorage.setItem("userID", result.userId);
-        this.$router.push('/');
+        this.$router.push('/ch/');
       } else {
         this.errorMessage = result.message;
       }

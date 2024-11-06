@@ -24,7 +24,7 @@ export async function getScheduleItemsForDay(userId, day) {
         {
             uslugaName: 'Наращивание волос',
             startTime: `${day}T14:00:00`,
-            endTime: `${day}T17:30:00`
+            endTime: `${day}T16:00:00`
         }
     ];
 }
