@@ -1,9 +1,9 @@
 <template>
   <div class="profile-page">
-    <Header  :user-id="userId"/>
+    <Header/>
     <div class="profile-content">
-      <Schedule class="schedule" :user-i-d="userId"/>
-      <ScheduleProfile class="profile" :user-id="userId" />
+      <Schedule class="schedule" />
+      <ScheduleProfile class="profile" />
     </div>
   </div>
 </template>
@@ -12,6 +12,7 @@
 import Header from "@/components/header.vue";
 import Schedule from "@/components/schedule.vue";
 import ScheduleProfile from "@/components/scheduleProfile.vue";
+import {getUser} from "@/service/userDataService.js";
 
 export default {
   components: {
@@ -21,17 +22,26 @@ export default {
   },
   data() {
     return {
-      userId: null
+      userID: null,
+      isAuthenticated: false
+
     };
   },
-  created() {
-    const userId = localStorage.getItem("userID");
-    const isAuthorized = localStorage.getItem("auth") === "true";
+  async created() {
+    this.userID = localStorage.getItem("userID");
+    this.isAuthorized = localStorage.getItem("isAuthorized") === "true";
 
-    if (!isAuthorized || !userId) {
-      this.$router.push("/ch/login");
+    if (!this.isAuthorized) {
+      this.$router.push("/login");
     } else {
-      this.userId = userId;
+      try {
+        const user = await getUser(this.userID)
+        if (!user) {
+          this.$router.push("/login");
+        }
+      } catch (e) {
+        this.$router.push("/login");
+      }
     }
   }
 };

@@ -40,8 +40,7 @@ export default {
 <style scoped>
 .filters-container {
   display: flex;
-
-  margin-bottom: 20px;
+  margin-bottom: -5px;
   justify-content: center;
 
   font-family: 'SF Pro Text', sans-serif;
@@ -80,6 +79,7 @@ export default {
   width: 40px;
   height: 3px;
   background-color: #4a3fb0;
+  border-radius: 30px;
 }
 
 </style>

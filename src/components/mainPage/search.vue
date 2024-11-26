@@ -1,71 +1,135 @@
 <template>
-  <div class="search-container">
+  <div class="search-container" id='search-id'>
     <div class="search-header-container">
       <h1 class="search-title">Поиск</h1>
-      <filters-component/>
-      <filters-toolbar :filter-options="filterOptions" :filterDropdownVisible="filterDropdownVisible"/>
+
+      <Filters/>
+
+      <!-- Компоненты фильтрации -->
+      <filters-toolbar
+          :filter-options="filterOptions"
+          :searchQuery="searchQuery"
+          @toggleFilter="toggleFilter"
+          @applyFilters="applyFilters"
+          @updateSearchQuery="updateSearchQuery"
+      />
     </div>
-    <hr class="divider-line">
-    <div class="services-list">
-      <service-component v-for="(service, index) in filteredServices" :key="index" :title="service.title" :description="service.description" :rating="service.rating" />
+
+
+    <!-- Отображение списка услуг -->
+    <div
+        class="services-list"
+        :class="{ 'single-item': services.length < 3 }"
+    >
+      <service-component
+          v-for="(service, index) in services"
+          :key="index"
+          :title="service.name"
+          :description="service.description"
+          :rating="service.rating || 4.5"
+          image=""
+      />
     </div>
   </div>
 </template>
 
 <script>
-import FiltersComponent from "@/components/mainPage/filters.vue";
-import ServiceComponent from "@/components/mainPage/service.vue";
 import FiltersToolbar from "@/components/mainPage/filtersToolbar.vue";
+import Filters from "@/components/mainPage/filters.vue";
+import ServiceComponent from "@/components/mainPage/service.vue";
+import { getFilteredServices } from "@/service/uslugasService.js";
 
 export default {
   components: {
-    FiltersComponent,
     FiltersToolbar,
-    ServiceComponent
+    ServiceComponent,
+    Filters
   },
   data() {
     return {
-      typeServices: [
-        {label: 'все', active: true},
-        {label: 'салоны красоты', active: false},
-        {label: 'мастера', active: false}
-      ],
       filterOptions: [
-        {label: 'Опция 1', selected: false},
-        {label: 'Опция 2', selected: false},
-        {label: 'Опция 3', selected: false}
+        { label: 'Массаж', selected: false },
+        { label: 'Маникюр', selected: false },
+        { label: 'Депиляция', selected: false },
+        { label: 'Наращивание', selected: false },
+        { label: 'Ламинирование', selected: false },
       ],
-      services: [
-        {title: 'Название', description: 'описание', rating: 4.5},
-        {title: 'Название', description: 'описание', rating: 4.5},
-        {title: 'Название', description: 'описание', rating: 4.5}
-      ],
-      filterDropdownVisible: false,
-      searchInputVisible: false,
-      searchQuery: ''
+      services: [],
+      searchQuery: '',
     };
   },
-  computed: {
-    filteredServices() {
-      return this.services.filter(service =>
-          service.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    }
-  },
   methods: {
-    toggleFilterDropdown() {
-      this.filterDropdownVisible = !this.filterDropdownVisible;
+    async loadServices() {
+      const filters = this.filterOptions
+          .filter((filter) => filter.selected)
+          .map((filter) => filter.label);
+
+      try {
+        this.services = await getFilteredServices(filters, this.searchQuery, this.$route.query.location || null);
+      } catch (error) {
+        console.error("Ошибка загрузки услуг:", error);
+      }
     },
-    toggleSearchInput() {
-      this.searchInputVisible = !this.searchInputVisible;
-    }
-  }
+    toggleFilter(index) {
+      this.filterOptions[index].selected = !this.filterOptions[index].selected;
+    },
+    applyFilters() {
+      this.updateQueryParams(); // Обновляем параметры в адресной строке
+    },
+    updateSearchQuery(query) {
+      this.searchQuery = query;
+      this.updateQueryParams();
+    },
+    updateQueryParams() {
+      const selectedFilters = this.filterOptions
+          .filter((filter) => filter.selected)
+          .map((filter) => filter.label);
+
+      const query = {
+        ...this.$route.query,
+        filters: selectedFilters.length ? selectedFilters.join(',') : undefined,
+        search: this.searchQuery || undefined,
+      };
+
+      this.$router.push({ query }).then(() => {
+        this.loadServices(); // Загружаем данные после обновления адресной строки
+      });
+    },
+    syncFiltersAndSearch() {
+      const query = this.$route.query;
+
+      // Синхронизация строки поиска
+      this.searchQuery = query.search || '';
+
+      // Синхронизация фильтров
+      if (query.filters) {
+        const selectedFilters = query.filters.split(',');
+
+        this.filterOptions.forEach((filter) => {
+          filter.selected = selectedFilters.includes(filter.label);
+        });
+      } else {
+        this.filterOptions.forEach((filter) => {
+          filter.selected = false;
+        });
+      }
+    },
+  },
+  watch: {
+    '$route.query': {
+      handler() {
+        this.syncFiltersAndSearch();
+        this.loadServices();
+      },
+      immediate: true,
+    },
+  },
 };
 </script>
 
 <style scoped>
 .search-container {
-  padding: 20px;
+  padding: 20px 60px;
 }
 
 .search-header-container {
@@ -73,8 +137,10 @@ export default {
   align-items: center;
   gap: 20px;
   margin-bottom: 20px;
-  justify-content: flex-start;
+  justify-content: space-between;
   flex-wrap: wrap;
+
+  border-bottom: 2px solid rgba(230, 230, 230, 0.5);
 }
 
 .search-title {
@@ -82,20 +148,28 @@ export default {
   font-family: 'SF Pro Text', sans-serif;
   font-weight: 600;
   margin-bottom: 20px;
-  margin-left: 50px;
 }
 
 
-.divider-line {
-  border: none;
-  border-top: 1px solid #e0e0e0;
-  margin: 0 50px 50px;
-}
 
 .services-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(3, minmax(250px, 1fr));
   gap: 20px;
-  margin-top: 20px;
 }
+
+.services-list.single-item {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(250px, 1fr));
+  gap: 20px;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .services-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 </style>

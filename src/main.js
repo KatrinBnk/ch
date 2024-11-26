@@ -5,20 +5,17 @@ import LoginPage from './Pages/login.vue';
 import MainPage from "@/Pages/mainPage.vue";
 import ProfilePage from "@/Pages/profilePage.vue";
 
-// Определяем маршруты
 const routes = [
-    { path: '/ch/', component: MainPage },
-    { path: '/ch/login', component: LoginPage },
-    {path: '/ch/appointments', component: ProfilePage}
+    { path: '/', component: MainPage },
+    { path: '/login', component: LoginPage },
+    { path: '/profile', component: ProfilePage }
 ];
 
-// Создаем экземпляр маршрутизатора
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/ch'), //Указан префикс (базовое начало всех адресов) для корректного деплоя в gp
     routes
 });
 
-// Создаем и монтируем Vue приложение
 createApp(App)
     .use(router)
     .mount('#app');

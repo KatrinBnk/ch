@@ -78,6 +78,7 @@
 import { useRouter } from 'vue-router';
 import { defineComponent } from 'vue';
 import { loginUser } from '@/service/authService.js';
+import {isTokenExpired} from "@/service/checkToken.js";
 
 export default defineComponent({
   name: "LoginPage",
@@ -93,9 +94,12 @@ export default defineComponent({
     return { router };
   },
   created() {
-    const isAuthorized = localStorage.getItem("auth") === "true";
-    if (isAuthorized) {
-      this.$router.push('/ch/');
+    if (!isTokenExpired(localStorage.getItem('token'))) {
+      this.$router.push('/');
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('isAuthorized');
+      localStorage.removeItem('userID');
     }
   },
   methods: {
@@ -103,9 +107,9 @@ export default defineComponent({
       const result = await loginUser(this.email, this.password);
 
       if (result.success) {
-        localStorage.setItem("auth", "true");
+        localStorage.setItem("isAuthorized", "true");
         localStorage.setItem("userID", result.userId);
-        this.$router.push('/ch/');
+        this.$router.push('/');
       } else {
         this.errorMessage = result.message;
       }
@@ -124,8 +128,8 @@ export default defineComponent({
 
 .login_page{
   background: #F9CFD3;
-  width: 100vw;        /* Ширина страницы */
-  height: 100vh;       /* Высота страницы */
+  width: 100vw;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -216,12 +220,12 @@ export default defineComponent({
 .divider::after {
   content: "";
   flex: 1;
-  border-bottom: 1px solid #d9d9d9; /* Цвет линии */
-  margin: 0 10px; /* Отступ между текстом и линиями */
+  border-bottom: 1px solid #d9d9d9;
+  margin: 0 10px;
 }
 
 .divider-text {
-  font-weight: bold; /* Жирный текст для слова "или" */
+  font-weight: bold;
   color: black;
 }
 

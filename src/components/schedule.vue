@@ -15,20 +15,16 @@ export default {
     CalendarSlider,
     CalendarTimeline
   },
-  props:{
-    userID :{
-      type: Number,
-      required: true
-    }
-  },
   data(){
     return{
       today: this.formatDateToISO(new Date()),
       selectedDate: this.formatDateToISO(new Date()),
-      scheduleItems: []
+      scheduleItems: [],
+      userID: null
     }
   },
   async created() {
+    this.userID = localStorage.getItem("userID");
     await this.fetchScheduleItems();
   },
   methods: {
@@ -36,7 +32,7 @@ export default {
       return date.toISOString().split("T")[0];
     },
     async fetchScheduleItems() {
-      this.scheduleItems = await getScheduleItemsForDay(this.userId, this.selectedDate);
+      this.scheduleItems = await getScheduleItemsForDay(this.userID, this.selectedDate);
     },
     async onDateSelected(date) {
       this.selectedDate = date;

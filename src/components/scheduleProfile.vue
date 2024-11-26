@@ -1,16 +1,17 @@
 <template>
   <div class="profile-container">
+
     <img
-        :src="user.profilePicture[0] || stubPhoto"
-        alt="Фото профиля"
+        :src="profilePhoto || stubPhoto"
+        alt="Аватар пользователя"
         class="profile-picture"
     />
 
-    <div v-if="firstName && lastName" class="profile-name">
-      <div class="first-name">{{ firstName }}</div>
-      <div class="last-name">{{ lastName }}</div>
+    <div class="profile-name">
+      {{userName}}
     </div>
 
+    <!--
     <div class="profile-bth">
       <img :src="stubPhoto" alt="btn"/>
       <img :src="stubPhoto" alt="btn"/>
@@ -25,43 +26,52 @@
       <img :src="stubPhoto" alt="master"/>
       </div>
     </div>
+    -->
   </div>
 </template>
 
 <script>
-import { getUser } from "@/service/userDataService";
-import stubPhoto from '@/assets/content-img.svg'
+import { getUser, getUserPhoto } from "@/service/userDataService";
+import stubPhoto from "@/assets/stub.svg"
 
 export default {
-  props: {
-    userId: {
-      type: Number,
-      required: true
-    }
-  },
   data() {
     return {
-      user: {
-        profilePicture: [],
-        name: ""
-      },
+      userID: null,
+      userName: "",
+      profilePhoto: null,
       stubPhoto: stubPhoto
     };
   },
   async created() {
-    try {
-      this.user = await getUser(this.userId);
-    } catch (error) {
-      console.error('Ошибка при получении данных пользователя:', error);
+    this.isAuthorized = localStorage.getItem("isAuthorized") === "true";
+
+    if (this.isAuthorized) {
+      this.userID = localStorage.getItem("userID");
+      if (this.userID) {
+        try {
+          const profileImage = await getUserPhoto(this.userID);
+
+          if (profileImage) {
+            this.profilePhoto = profileImage;
+          } else {
+            this.userPhoto = this.stubPhoto;
+          }
+        } catch (error) {
+          console.error("Ошибка при загрузке фотографии профиля:", error);
+          this.userPhoto = this.stubPhoto;
+        }
+
+        try{
+          const user = await getUser(this.userID);
+          if (user) {
+            this.userName = user.name;
+          }
+        } catch (error){
+          console.error(error);
+        }
+      }
     }
-  },
-  computed: {
-    firstName() {
-      return this.user.name ? this.user.name.split(" ")[0] : "";
-    },
-    lastName() {
-      return this.user.name ? this.user.name.split(" ")[1] : "";
-    },
   },
 };
 </script>
@@ -98,11 +108,6 @@ export default {
   text-align: center;
   margin-bottom: 15px;
   color: #000000;
-}
-
-.first-name,
-.last-name {
-  display: block;
 }
 
 .profile-bth {
