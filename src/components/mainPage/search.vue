@@ -74,7 +74,7 @@ export default {
       this.filterOptions[index].selected = !this.filterOptions[index].selected;
     },
     applyFilters() {
-      this.updateQueryParams(); // Обновляем параметры в адресной строке
+      this.updateQueryParams();
     },
     updateSearchQuery(query) {
       this.searchQuery = query;
@@ -92,16 +92,14 @@ export default {
       };
 
       this.$router.push({ query }).then(() => {
-        this.loadServices(); // Загружаем данные после обновления адресной строки
+        this.loadServices();
       });
     },
     syncFiltersAndSearch() {
       const query = this.$route.query;
 
-      // Синхронизация строки поиска
       this.searchQuery = query.search || '';
 
-      // Синхронизация фильтров
       if (query.filters) {
         const selectedFilters = query.filters.split(',');
 

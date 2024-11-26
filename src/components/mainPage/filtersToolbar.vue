@@ -88,10 +88,10 @@ export default {
       this.searchInputVisible = false;
     },
     toggleFilter(index) {
-      this.$emit('toggleFilter', index); // Передаём событие о переключении фильтра
+      this.$emit('toggleFilter', index);
     },
     applyFilters() {
-      this.$emit('applyFilters'); // Сигнализируем о применении фильтров
+      this.$emit('applyFilters');
       this.updateUrlWithFilters();
       this.filterDropdownVisible = false;
       document.removeEventListener('click', this.hideFilterDropdown);
@@ -100,7 +100,7 @@ export default {
       this.filterOptions.forEach((filter) => {
         filter.selected = false;
       });
-      this.$emit('resetFilters'); // Сигнализируем о сбросе фильтров
+      this.$emit('resetFilters');
       this.updateUrlWithFilters();
       this.filterDropdownVisible = false;
       document.removeEventListener('click', this.hideFilterDropdown);
@@ -108,7 +108,7 @@ export default {
     onSearchInput(event) {
       const value = event.target.value;
       this.localSearchQuery = value;
-      this.$emit('updateSearchQuery', value); // Обновляем строку поиска моментально
+      this.$emit('updateSearchQuery', value);
     },
   },
 };

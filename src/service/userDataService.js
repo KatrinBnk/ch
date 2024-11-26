@@ -42,7 +42,6 @@ export async function getUserPhoto(userID) {
 
     const token = localStorage.getItem('token');
 
-    // Проверяем, есть ли токен и не истёк ли он
     if (!token || isTokenExpired(token)) {
         console.error("Токен отсутствует или истёк. Требуется авторизация.");
         throw new Error("Токен отсутствует или истёк. Требуется авторизация.");
