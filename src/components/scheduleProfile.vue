@@ -32,7 +32,7 @@
 
 <script>
 import { getUser, getUserPhoto } from "@/service/userDataService";
-import stubPhoto from "@/assets/stub.svg"
+import stubPhoto from "../assets/stub.svg"
 
 export default {
   data() {
