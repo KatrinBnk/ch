@@ -16,7 +16,7 @@
               <input type="radio" name="registration_type" value="user" v-model="user.role" required> Пользователь
             </label>
             <label>
-              <input type="radio" name="registration_type" value="master" v-model="user.role" required> Продавец
+              <input type="radio" name="registration_type" value="master" v-model="user.role" required> Мастер
             </label>
           </fieldset>
 

@@ -87,6 +87,11 @@ export default {
         }));
         await this.loadServices();
       } catch (error) {
+        const categories = ["Категория 1", "Категория 2", "Категория 3", "Категория 4"]
+        this.filterOptions = categories.map(category => ({
+          label: category,
+          selected: false,
+        }));
         console.error('Ошибка при загрузке категорий:', error);
       }
     },
