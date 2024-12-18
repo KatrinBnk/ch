@@ -15,7 +15,7 @@
     <div class="categories-container">
       <h1 class="categories-title">Категории</h1>
       <div class="categories-list">
-        <Category v-for="(category, index) in categories" :key="index" :text="category"  image=""/>
+        <Category v-for="(category, index) in categories.slice(0, 4)" :key="index" :text="category"  image=""/>
       </div>
     </div>
 
@@ -55,6 +55,7 @@ export default {
       this.categories = await fetchCategories(); 
     } catch (error) {
       console.error("Ошибка при загрузке категорий:", error);
+      this.categories = ["Категория 5","Категория 4","Категория 3","Категория 2" ]
     }
   }
 };
