@@ -38,7 +38,7 @@ export default {
 
 .poster-title {
   font-family: 'SF Pro Text', sans-serif;
-  font-size: 40px;
+  font-size: 50px;
   font-weight: 600;
   text-align: left;
   text-underline-position: from-font;
@@ -55,7 +55,7 @@ export default {
 
 .poster-button {
   border: none;
-  padding: 15px 25px;
+  padding: 10px 20px;
   border-radius: 50px;
   font-family: 'SF Pro Text', sans-serif;
   font-size: 20px;
