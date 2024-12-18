@@ -50,12 +50,20 @@
         <!-- Выпадающий список -->
         <ul v-if="scheduleVisible" class="schedule-dropdown" @mouseleave="handleMouseLeaveSchedule">
           <li v-if="schedule.length === 0" class="schedule-item">
-            Записей нет
+            <img src="@/assets/sub2.svg" alt="Заглушка" class="schedule-placeholder-img" />
+            <div class="schedule-item-text">
+              <span class="title">Записей нет</span>
+            </div>
           </li>
           <li v-for="(item, index) in schedule" :key="index" class="schedule-item">
-            {{ item.uslugaName }} {{ formatTime(item.startTime) }} - {{ formatTime(item.endTime) }}
+            <img src="@/assets/sub2.svg" alt="Заглушка" class="schedule-placeholder-img" />
+            <div class="schedule-item-text">
+              <span class="title">{{ item.uslugaName }}</span>
+              <span class="time">{{ formatTime(item.startTime) }} - {{ formatTime(item.endTime) }}</span>
+            </div>
           </li>
         </ul>
+
         <div class="avatar-wrapper" @click="toggleUserDropdown">
           <img
               :src="userPhoto"
@@ -85,9 +93,13 @@ import {fetchUslugas} from "@/service/uslugasService.js";
 import {getUserPhoto} from "@/service/userDataService.js"
 import {isTokenExpired} from "@/service/checkToken.js";
 import stubPhoto from "@/assets/content-img.png"
+import stub2 from "@/assets/stub.svg"
 import {getScheduleItemsForDay} from "@/service/scheduleService.js";
 
 export default {
+  components: {
+    stub2,
+  },
   data() {
     return {
       selectedAddress: '',
@@ -501,4 +513,67 @@ export default {
 .user-dropdown-item:hover {
   background-color: #f0f0f0;
 }
+
+.schedule-placeholder-img{
+  height: 44px;
+  width: 44px;
+}
+
+
+.schedule-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 0 7px 0 #0000001F;
+  list-style: none;
+  padding: 10px 0;
+  z-index: 2000;
+  width: 280px;
+  font-family: 'SF Pro Text', sans-serif;
+}
+
+.schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.schedule-item:last-child {
+  border-bottom: none;
+}
+
+.schedule-placeholder-img {
+  height: 44px;
+  width: 44px;
+  border-radius: 50%;
+  background: #EDEDED;
+  flex-shrink: 0;
+}
+
+.schedule-item-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.schedule-item-text .title {
+  font-family: 'SF Pro Text', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #000;
+}
+
+.schedule-item-text .time {
+  font-family: 'SF Pro Text', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: #888;
+  margin-top: 2px;
+}
+
+
 </style>
