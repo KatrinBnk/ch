@@ -33,12 +33,46 @@ export default {
   },
   methods: {
     async fetchScheduleItems() {
-      this.scheduleItems = await getScheduleItemsForDay(this.userID, this.selectedDate);
+      this.selectedDate = this.formatDateToYYYYMMDD(this.selectedDate);
+      if (localStorage.getItem("userID") === "0"){
+        if (["2024-12-18","2024-12-22","2024-12-23"].includes(this.selectedDate)) {
+        this.scheduleItems = [
+          {
+            "uslugaName": "услуга 1",
+            "startTime": "2024-12-23T10:37:00",
+            "endTime": "2024-12-23T09:07:00.000Z"
+          },
+          {
+            "uslugaName": "услуга 2",
+            "startTime": "2024-12-23T12:38:00",
+            "endTime": "2024-12-23T11:08:00.000Z"
+          }
+        ];}
+        else this.scheduleItems = []
+      } else {
+        this.scheduleItems = await getScheduleItemsForDay(this.userID, this.selectedDate);
+      }
     },
     async onDateSelected(date) {
-      this.selectedDate = date;
+      this.selectedDate = this.formatDateToYYYYMMDD(date);
       await this.fetchScheduleItems();
+    },
+    formatDateToYYYYMMDD(date) {
+      const d = new Date(date);
+
+      // Проверка корректности даты
+      if (isNaN(d.getTime())) {
+        console.error("Некорректный формат даты:", date);
+        return null;
+      }
+
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0'); // Месяцы с 0 по 11
+      const day = String(d.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
     }
+
   }
 
 }

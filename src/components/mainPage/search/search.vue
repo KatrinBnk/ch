@@ -107,8 +107,8 @@ export default {
           selectedCategories: filters,
           searchQuery: this.searchQuery,
           location,
-          minPrice: this.minPrice, // если есть
-          maxPrice: this.maxPrice  // если есть
+          minPrice: this.minPrice,
+          maxPrice: this.maxPrice
         });
 
         // TODO: заглушка (УБРАТЬ) стоит по просьбе Реналя для примера
@@ -176,28 +176,7 @@ export default {
     closeServiceModal() {
       this.isServiceModalVisible = false;
       this.selectedService = null;
-      this.selectedSlot = null; // Сброс выбранного слота
-    },
-    async applyForService() {
-      if (!this.selectedSlot) {
-        alert("Пожалуйста, выберите слот для записи.");
-        return;
-      }
-
-      const userId = localStorage.getItem("userID");
-      const uslugaId = this.selectedService.id;
-
-      try {
-        const appointmentResponse = await makeAppointment(userId, uslugaId, this.selectedSlot);
-        if (appointmentResponse) {
-          alert("Вы успешно записались на услугу!");
-          this.closeServiceModal();
-          this.loadServices(); // Обновление списка услуг после записи
-        }
-      } catch (error) {
-        alert("Произошла ошибка при записи на услугу.");
-        console.error(error);
-      }
+      this.selectedSlot = null;
     },
   },
   watch: {
@@ -234,8 +213,6 @@ export default {
   font-weight: 600;
   margin-bottom: 20px;
 }
-
-
 
 .services-list {
   display: grid;

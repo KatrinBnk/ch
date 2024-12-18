@@ -19,6 +19,8 @@ export async function loginUser(email, password) {
                 },
             });
 
+            console.log(userResponse);
+
             if (userResponse.status === 200 && userResponse.data) {
                 const userId = userResponse.data.id;
                 localStorage.setItem('userID', userId);
@@ -26,12 +28,12 @@ export async function loginUser(email, password) {
                 return { success: true, token, userId };
             } else {
                 console.error('Не удалось получить данные пользователя.');
-                return { success: false, message: 'Не удалось получить данные пользователя.' };
+                return { success: false, message: 'Не удалось получить данные пользователя.'};
             }
         } else {
             return {
                 success: false,
-                message: 'Ошибка авторизации. Проверьте логин и пароль.',
+                message: 'Ошибка авторизации. Проверьте логин и пароль.'
             };
         }
     } catch (error) {
@@ -39,6 +41,7 @@ export async function loginUser(email, password) {
         return {
             success: false,
             message: 'Ошибка подключения к серверу. Попробуйте позже.',
+            code: 500
         };
     }
 }

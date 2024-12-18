@@ -128,6 +128,11 @@ export default {
   async created() {
     this.isAuthorized = !isTokenExpired(localStorage.getItem('token'));
 
+    if (localStorage.getItem('userID') === '0') {
+      this.isAuthorized = true;
+      this.userPhoto = stubPhoto;
+    }
+
     if (this.isAuthorized) {
       const userId = localStorage.getItem("userID");
       if (userId) {
@@ -143,6 +148,8 @@ export default {
           console.error("Ошибка при загрузке фотографии профиля:", error);
           this.userPhoto = stubPhoto;
         }
+      } else{
+        this.userPhoto = stubPhoto;
       }
     }
 
@@ -162,6 +169,7 @@ export default {
       const today = new Date().toISOString().split('T')[0]; // Сегодняшний день
       try {
         this.schedule = await getScheduleItemsForDay(userId, today);
+        console.log(this.schedule)
       } catch (error) {
         console.error('Ошибка при загрузке расписания:', error);
         this.schedule = [];
@@ -170,6 +178,20 @@ export default {
     async handleMouseOverSchedule() {
       this.scheduleVisible = true;
       await this.fetchScheduleForToday();
+      if(localStorage.getItem("userID") === "0"){
+        this.schedule = [
+          {
+            "uslugaName": "запись 1",
+            "startTime": "2024-12-19T12:12:00",
+            "endTime": "2024-12-19T10:42:00.000Z"
+          },
+          {
+            "uslugaName": "запись 2",
+            "startTime": "2024-12-19T20:53:00",
+            "endTime": "2024-12-19T19:23:00.000Z"
+          }
+        ]
+      }
     },
     handleMouseLeaveSchedule() {
       this.scheduleVisible = false;

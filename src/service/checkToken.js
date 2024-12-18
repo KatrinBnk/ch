@@ -17,6 +17,12 @@ export function decodeToken(token) {
 
 
 export function isTokenExpired(token) {
+
+    const userID = localStorage.getItem('userID');
+    if (userID === 0) {
+        return true;
+    }
+
     try {
         const payload = decodeToken(token);
 
@@ -24,6 +30,9 @@ export function isTokenExpired(token) {
 
         return payload.exp < currentTime;
     } catch (err) {
+        if (localStorage.getItem('userID') === 0) {
+            return true;
+        }
         console.error("Ошибка декодирования токена:", err);
         localStorage.removeItem('token');
         return true;
@@ -33,6 +42,9 @@ export function isTokenExpired(token) {
 export function userIsAuthenticated() {
     const token = localStorage.getItem('token');
     const userID = localStorage.getItem('userID');
+    if (userID === '0') {
+        return true;
+    }
     if (!token || isTokenExpired(token)) {
         localStorage.removeItem('token');
         localStorage.removeItem('userID');

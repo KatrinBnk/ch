@@ -62,6 +62,13 @@ export default {
     } catch (error) {
       console.error("Ошибка при получении расписания за месяц:", error);
     }
+    if (localStorage.getItem("userID") === "0"){
+      this.highlightedDates = [
+        "2024-12-18",
+        "2024-12-22",
+        "2024-12-23"
+      ]
+    }
   },
 
   methods: {

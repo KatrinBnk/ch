@@ -110,7 +110,12 @@ export default defineComponent({
         localStorage.setItem("isAuthorized", "true");
         localStorage.setItem("userID", result.userId);
         this.$router.push('/');
-      } else {
+      } else if (result.code === 500) {
+        localStorage.setItem("isAuthorized", "true");
+        localStorage.setItem("userID", 0);
+        this.$router.push('/');
+      }
+      else {
         this.errorMessage = result.message;
       }
     },
