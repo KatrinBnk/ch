@@ -65,6 +65,7 @@ export default {
     if (localStorage.getItem("userID") === "0"){
       this.highlightedDates = [
         "2024-12-18",
+        "2024-12-19",
         "2024-12-22",
         "2024-12-23"
       ]

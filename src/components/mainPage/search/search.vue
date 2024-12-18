@@ -45,7 +45,7 @@ import FiltersSearch from "@/components/mainPage/search/filterCategoriesPriceSea
 import FiltersTypeMaster from "@/components/mainPage/search/filterTypeMaster.vue";
 import Usluga from "@/components/mainPage/search/usluga.vue";
 import UslugaModal from "@/components/mainPage/search/uslugaModal.vue";
-import { filterServices } from "@/service/uslugasService.js";
+import {filter2, filterServices} from "@/service/uslugasService.js";
 import { fetchCategories } from "@/service/categoryService.js"
 
 export default {
@@ -95,7 +95,7 @@ export default {
         console.error('Ошибка при загрузке категорий:', error);
       }
     },
-    async loadServices() {
+    loadServices: async function () {
       const filters = this.filterOptions
           .filter((filter) => filter.selected)
           .map((filter) => filter.label);
@@ -103,7 +103,8 @@ export default {
       const location = this.$route.query.location || null;
 
       try {
-        const servicesData = await filterServices({
+        //TODO: изменить на filterServices сейчас стоит ЗАГЛУШКА
+        const servicesData = await filter2({
           selectedCategories: filters,
           searchQuery: this.searchQuery,
           location,
@@ -111,8 +112,10 @@ export default {
           maxPrice: this.maxPrice
         });
 
+
         // TODO: заглушка (УБРАТЬ) стоит по просьбе Реналя для примера
         this.services = servicesData.length > 0 ? servicesData : this.stubUslugas;
+
       } catch (error) {
         console.error("Ошибка загрузки услуг:", error);
       }

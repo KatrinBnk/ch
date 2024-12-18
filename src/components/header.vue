@@ -181,14 +181,14 @@ export default {
       if(localStorage.getItem("userID") === "0"){
         this.schedule = [
           {
-            "uslugaName": "запись 1",
-            "startTime": "2024-12-19T12:12:00",
-            "endTime": "2024-12-19T10:42:00.000Z"
+            "uslugaName": "услуга 1",
+            "startTime": "2024-12-23T10:37:00",
+            "endTime": "2024-12-23T09:07:00.000Z"
           },
           {
-            "uslugaName": "запись 2",
-            "startTime": "2024-12-19T20:53:00",
-            "endTime": "2024-12-19T19:23:00.000Z"
+            "uslugaName": "услуга 2",
+            "startTime": "2024-12-23T12:38:00",
+            "endTime": "2024-12-23T11:08:00.000Z"
           }
         ]
       }

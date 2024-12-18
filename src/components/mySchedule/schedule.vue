@@ -35,7 +35,7 @@ export default {
     async fetchScheduleItems() {
       this.selectedDate = this.formatDateToYYYYMMDD(this.selectedDate);
       if (localStorage.getItem("userID") === "0"){
-        if (["2024-12-18","2024-12-22","2024-12-23"].includes(this.selectedDate)) {
+        if (["2024-12-18","2024-12-19","2024-12-22","2024-12-23"].includes(this.selectedDate)) {
         this.scheduleItems = [
           {
             "uslugaName": "услуга 1",
