@@ -153,6 +153,36 @@ export default {
   margin-right: 20px;
 }
 
+.user-info {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.user-name {
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0 0 10px 0;
+  font-family: 'SF Pro Text', sans-serif;
+  color: black;
+}
+
+.divider {
+  width: 100%;
+  height: 2px;
+  background-color: #E3E3E3;
+  /*TODO: если нет контента пока оставить так*/
+  margin: 81px 0 147px;
+}
+
+.user-info h3 {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 5px 0;
+  font-family: 'SF Pro Text', sans-serif;
+  color: #333;
+}
+
 .edit-button {
   position: absolute;
   top: 20px;
@@ -162,7 +192,6 @@ export default {
   cursor: pointer;
   padding: 0;
 }
-
 
 .edit-modal {
   position: fixed;

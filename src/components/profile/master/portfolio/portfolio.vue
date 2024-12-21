@@ -122,24 +122,42 @@ export default {
 .profile-page{
   background-color: #ffffff;
   border-radius: 30px;
-  padding: 30px;
+  padding: 30px 60px;
   width: 100%;
   box-sizing: border-box;
   box-shadow: 0 0 7px 0 #0000001F;
   font-family: "SF Pro Text", sans-serif;
+  font-weight: 400;
 }
 
-.create-portfolio-button {
+.title-portfolio{
+  font-size: 40px;
+}
+
+.portfolio-item{
+  font-size: 20px;
+}
+
+
+.create-portfolio-button,
+.update-portfolio-button {
   background-color: #4848a0;
   color: white;
-  padding: 10px 20px;
+  padding: 15px 30px;
   margin-bottom: 20px;
-  border-radius: 5px;
+  margin-left: 20px;
+  margin-top: 30px;
+  border-radius: 30px;
   border: none;
   cursor: pointer;
+
+  font-family: "SF Pro Text", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
 }
 
-.create-portfolio-button:hover {
+.create-portfolio-button:hover,
+.update-portfolio-button:hover {
   background-color: #37378f;
 }
 
@@ -150,6 +168,7 @@ export default {
 
 .portfolio-photos img {
   max-width: 200px;
+  height: 100%;
   margin: 10px;
   border-radius: 5px;
 }

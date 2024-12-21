@@ -8,7 +8,7 @@
       <div class="modal-body">
         <p>{{ selectedService.description }}</p>
         <p>Стоимость: {{ selectedService.price }} ₽</p>
-        <p>Длительность: {{ selectedService.duration }} минут</p>
+        <p>Длительность: {{ selectedService.durationMinutes }} минут</p>
         <p>Локация: {{ selectedService.location }}</p>
 
         <!-- Выводим доступные слоты -->

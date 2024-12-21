@@ -245,8 +245,8 @@ input[type='file'] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 120px; /* Фиксированная ширина фото + кнопки */
-  gap: 10px; /* Расстояние между изображением и кнопкой */
+  width: 120px;
+  gap: 10px;
 }
 
 .photo-item img {
@@ -261,10 +261,8 @@ input[type='file'] {
   text-align: center;
 }
 
-
-
 .photo-actions button {
-  background-color: #f44336;
+  background-color: #a94950;
   color: white;
   border: none;
   border-radius: 5px;
@@ -275,20 +273,20 @@ input[type='file'] {
 }
 
 .photo-actions button:hover {
-  background-color: #e03131;
+  background-color: #a94959;
 }
 
 input[type="file"] {
-  opacity: 0; /* Скрываем элемент, делая его прозрачным */
-  position: absolute; /* Убираем из потока документа */
+  opacity: 0;
+  position: absolute;
   width: 0;
   height: 0;
-  z-index: -1; /* Убираем из видимости */
+  z-index: -1;
 }
 
 .add-file {
   display: inline-block;
-  background-color: #4caf50;
+  background-color: #4848A0;
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
@@ -298,10 +296,8 @@ input[type="file"] {
 }
 
 .add-file:hover {
-  background-color: #45a049;
+  background-color: #4949A9;
 }
-
-
 
 .crop-modal {
   position: fixed;
@@ -348,7 +344,7 @@ input[type="file"] {
 }
 
 .crop-container button:last-of-type {
-  background-color: #f44336;
+  background-color: #a94959;
   color: white;
 }
 </style>
