@@ -104,7 +104,7 @@ export default {
 
       try {
         //TODO: изменить на filterServices сейчас стоит ЗАГЛУШКА
-        const servicesData = await filter2({
+        const servicesData = await filterServices({
           selectedCategories: filters,
           searchQuery: this.searchQuery,
           location,

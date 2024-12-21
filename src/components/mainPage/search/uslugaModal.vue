@@ -1,35 +1,42 @@
 <template>
   <div v-if="isServiceModalVisible" class="modal">
     <div class="modal-content">
-    <div class="modal-header">
-      <h2>{{ selectedService.name }}</h2>
-      <button @click="closeModal">Закрыть</button>
-    </div>
-    <div class="modal-body">
-      <p>{{ selectedService.description }}</p>
-      <p>Стоимость: {{ selectedService.price }}</p>
-      <p>Длительность: {{ selectedService.duration }}</p>
-      <p>Локация: {{ selectedService.location }}</p>
+      <div class="modal-header">
+        <h2>{{ selectedService.name }}</h2>
+        <button @click="closeModal">Закрыть</button>
+      </div>
+      <div class="modal-body">
+        <p>{{ selectedService.description }}</p>
+        <p>Стоимость: {{ selectedService.price }} ₽</p>
+        <p>Длительность: {{ selectedService.duration }} минут</p>
+        <p>Локация: {{ selectedService.location }}</p>
 
-      <!-- Выводим доступные слоты -->
-      <h3>Доступные слоты:</h3>
-      <ul>
-        <li v-for="(slot, index) in availableSlots" :key="index">
-          <label>
-            <input
-                type="radio"
-                :value="slot"
-                v-model="selectedSlot"
-                :disabled="!slot.available"
-            />
-            {{ slot.date }} | {{ slot.time }}
-          </label>
-        </li>
-      </ul>
-    </div>
-    <div class="modal-footer">
-      <button @click="applyForService" :disabled="!selectedSlot">Записаться</button>
-    </div>
+        <!-- Выводим доступные слоты -->
+        <h3>Доступные слоты:</h3>
+        <div v-if="availableSlots.length > 0">
+          <div v-for="(group, date) in groupedSlots" :key="date">
+            <h4>{{ date }}</h4>
+            <ul>
+              <li v-for="slot in group" :key="slot.id">
+                <label :class="{ disabled: !slot.available }">
+                  <input
+                      type="radio"
+                      :value="slot"
+                      v-model="selectedSlot"
+                      :disabled="!slot.available"
+                  />
+                  {{ formatSlotTime(slot) }}
+                  <span v-if="!slot.available" class="unavailable"> - Недоступно</span>
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p v-else>Нет доступных слотов для записи.</p>
+      </div>
+      <div class="modal-footer">
+        <button @click="applyForService" :disabled="!selectedSlot">Записаться</button>
+      </div>
     </div>
   </div>
 </template>
@@ -47,6 +54,19 @@ export default {
       availableSlots: [],
       selectedSlot: null,
     };
+  },
+  computed: {
+    // Группируем слоты по датам
+    groupedSlots() {
+      return this.availableSlots.reduce((groups, slot) => {
+        const date = slot.date.split('T')[0]; // Получаем дату в формате YYYY-MM-DD
+        if (!groups[date]) {
+          groups[date] = [];
+        }
+        groups[date].push(slot);
+        return groups;
+      }, {});
+    },
   },
   async created() {
     if (this.selectedService) {
@@ -95,6 +115,15 @@ export default {
         alert("Произошла ошибка при записи на услугу.");
         console.error(error);
       }
+    },
+    // Форматируем время, удаляя лишние части
+    formatSlotTime(slot) {
+      const timeParts = slot.time.split(':');
+      if (timeParts.length === 2) {
+        // Если времени в секундах нет, добавляем :00
+        return `${timeParts[0]}:${timeParts[1]}:00`;
+      }
+      return slot.time;
     },
   },
 };
@@ -187,6 +216,16 @@ input[type="radio"] {
   margin-right: 8px;
 }
 
+.unavailable {
+  color: #d9534f;
+}
+
+.disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
 /* Анимация появления модального окна */
 @keyframes fadeIn {
   from {
@@ -199,4 +238,3 @@ input[type="radio"] {
   }
 }
 </style>
-

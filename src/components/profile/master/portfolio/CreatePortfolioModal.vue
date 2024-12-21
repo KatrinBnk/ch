@@ -3,19 +3,49 @@
     <div class="modal-content">
       <h2>Создать новое портфолио</h2>
       <form @submit.prevent="submitForm">
+        <!-- Описание -->
         <div class="form-group">
           <label for="description">Описание:</label>
           <textarea v-model="portfolioData.description" required></textarea>
         </div>
+
+        <!-- Поле для загрузки фото -->
         <div class="form-group">
-          <label for="photo">Фото (PNG, несколько файлов):</label>
-          <input type="file" @change="handleFileChange" accept="image/png" multiple />
+          <label for="photo">Фото (PNG, одно фото за раз):</label>
+          <input type="file" @change="openCropModal" accept="image/png" />
         </div>
+
+        <!-- Превью добавленных фото -->
+        <div class="form-group">
+          <label>Добавленные фотографии:</label>
+          <div class="photo-preview">
+            <div
+                v-for="(photo, index) in previewPhotos"
+                :key="index"
+                class="photo-item"
+            >
+              <img :src="photo" alt="Photo Preview" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Модальное окно обрезки -->
+        <div v-if="showCropModal" class="crop-modal">
+          <div class="crop-container">
+            <img ref="cropImage" :src="currentPhoto" alt="To Crop" />
+            <button type="button" @click="confirmCrop">Обрезать и сохранить</button>
+            <button type="button" @click="closeCropModal">Отменить</button>
+          </div>
+        </div>
+
+        <!-- Кнопки действий -->
         <div class="form-actions">
           <button type="submit" :disabled="isSubmitting">Создать</button>
           <button type="button" @click="closeModal">Отменить</button>
         </div>
       </form>
+
+      <!-- Сообщения об ошибке и успехе -->
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       <div v-if="isSuccessMessage" class="success-message">Портфолио успешно создано!</div>
     </div>
@@ -23,67 +53,73 @@
 </template>
 
 <script>
+import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.css';
 import { createPortfolio } from '@/service/portfolioService';
 
 export default {
   props: {
     userId: {
       type: Number,
-      required: true
+      required: true,
     },
     isVisible: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       portfolioData: {
         description: '',
-        photos: [] // Массив для хранения выбранных файлов
+        photos: [], // Обработанные фотографии (Base64 без префикса)
       },
-      isSubmitting: false, // Флаг для блокировки кнопки отправки
-      errorMessage: '', // Для отображения ошибок
-      isSuccessMessage: false // Для отображения успеха
+      previewPhotos: [], // Для предпросмотра
+      currentPhoto: null, // URL текущего фото для обрезки
+      showCropModal: false, // Флаг отображения окна обрезки
+      cropper: null,
+      isSubmitting: false,
+      errorMessage: '',
+      isSuccessMessage: false,
     };
   },
   methods: {
     closeModal() {
       this.$emit('close');
     },
-    handleFileChange(event) {
-      const files = event.target.files;
-      const validPhotos = [];
-      let invalidFileSelected = false;
+    openCropModal(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.currentPhoto = URL.createObjectURL(file);
+        this.showCropModal = true;
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type === 'image/png') {
-          validPhotos.push(file);
-        } else {
-          invalidFileSelected = true;
-        }
+        this.$nextTick(() => {
+          const image = this.$refs.cropImage;
+          this.cropper = new Cropper(image, {
+            aspectRatio: 1, // Квадратное обрезание
+            viewMode: 2,
+          });
+        });
       }
-
-      if (invalidFileSelected) {
-        this.errorMessage = 'Можно загружать только изображения формата PNG.';
-      } else {
-        this.errorMessage = '';
-      }
-
-      this.portfolioData.photos = validPhotos; // Обновляем массив фотографий
     },
-    // Функция для преобразования файла в строку Base64
-    fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-          const base64String = reader.result.split(',')[1]; // Удаляем префикс "data:image/png;base64,"
-          resolve(base64String);
-        };
-        reader.onerror = error => reject(error);
-      });
+    confirmCrop() {
+      const canvas = this.cropper.getCroppedCanvas();
+      const base64Image = canvas.toDataURL('image/png');
+      const base64Data = base64Image.replace(/^data:image\/png;base64,/, ''); // Убираем префикс
+
+      // Сохраняем фото
+      this.portfolioData.photos.push(base64Data);
+      this.previewPhotos.push(base64Image); // Для предпросмотра с префиксом
+
+      this.closeCropModal();
+    },
+    closeCropModal() {
+      this.showCropModal = false;
+      this.currentPhoto = null;
+      if (this.cropper) {
+        this.cropper.destroy();
+        this.cropper = null;
+      }
     },
     async submitForm() {
       this.isSubmitting = true;
@@ -91,36 +127,23 @@ export default {
       this.isSuccessMessage = false;
 
       try {
-        // Проверяем, что описание заполнено
         if (!this.portfolioData.description.trim()) {
           this.errorMessage = 'Пожалуйста, заполните поле описания.';
           this.isSubmitting = false;
           return;
         }
 
-        // Обработка фотографий
-        let photosBase64 = null;
-        if (this.portfolioData.photos.length > 0) {
-          const photoPromises = this.portfolioData.photos.map(file => this.fileToBase64(file));
-          photosBase64 = await Promise.all(photoPromises);
-        }
-
-        // Формируем данные для отправки
+        // Данные для отправки
         const dataToSend = {
           description: this.portfolioData.description,
-          photos: photosBase64 // Это будет null, если фотографий нет
+          photos: this.portfolioData.photos, // Обработанные фотографии
         };
 
-        // Отправляем запрос на создание портфолио
         await createPortfolio(this.userId, dataToSend);
 
-        // Уведомляем родительский компонент о создании
         this.$emit('portfolioCreated');
-
-        // Показываем сообщение об успешном создании
         this.isSuccessMessage = true;
 
-        // Закрываем модальное окно через 2 секунды
         setTimeout(() => {
           this.closeModal();
         }, 2000);
@@ -130,8 +153,8 @@ export default {
       } finally {
         this.isSubmitting = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -159,14 +182,48 @@ export default {
   margin-bottom: 15px;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
+.photo-preview {
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.form-actions {
+.photo-item img {
+  max-width: 100px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.crop-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.crop-container {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.crop-container img {
+  max-width: 100%;
+  max-height: 200px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 button {

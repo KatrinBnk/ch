@@ -31,6 +31,28 @@ export async function makeAppointment(userID, uslugaID, slot) {
     }
 }
 
+export async function canselAppointment(appID) {
+    const token = localStorage.getItem('token');
+
+    if (!token || isTokenExpired(token)) {
+        console.error("Токен отсутствует или истёк. Требуется авторизация.");
+        throw new Error("Токен отсутствует или истёк. Требуется авторизация.");
+    }
+
+    try {
+        const response = await axios.delete(`http://localhost:8080/applications/${appID}`, {
+            headers:{
+                "Authorization": token,
+            }
+        })
+
+        console.log(response);
+        return true;
+    } catch (error){
+        console.error(error);
+        return false
+    }
+}
 
 export async function getFreeSlots(uslugaID) {
     const token = localStorage.getItem('token');

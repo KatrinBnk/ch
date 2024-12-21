@@ -25,7 +25,7 @@
           <div class="btn">
             <button/>
             <button/>
-            <button/>
+            <button class="btn-cancel" type="button" @click="cancelAnAppointment(item.id)">x</button>
           </div>
         </div>
       </div>
@@ -37,6 +37,7 @@
 
 <script>
 import stubPhoto from '@/assets/content-img.svg'
+import {canselAppointment} from "@/service/applicationService.js"
 
 export default {
   props: {
@@ -89,6 +90,13 @@ export default {
         }
       });
     },
+    cancelAnAppointment(id){
+      if (canselAppointment(id)) {
+        alert("Запись успешно отменена");
+      } else{
+        alert("Удаление записи на услугу невозможно.")
+      }
+    }
   },
   mounted() {
     this.updateImageHeight();
@@ -219,6 +227,10 @@ export default {
   border: none;
   cursor: pointer;
   outline: none;
+}
+
+.btn-cancel{
+  color: red;
 }
 </style>
 

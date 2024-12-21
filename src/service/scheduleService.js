@@ -114,6 +114,8 @@ export async function getScheduleItemsForDay(userId, day) {
             },
         });
 
+        console.log(response);
+
         if (response.status === 200) {
             const applications = response.data;
 
@@ -129,6 +131,7 @@ export async function getScheduleItemsForDay(userId, day) {
             }
 
             return filteredApplications.map(application => ({
+                id: application.id,
                 uslugaName: application.usluga.name,
                 startTime: `${day}T${application.time}`,
                 endTime: calculateEndTime(`${day}T${application.time}`, application.usluga.durationMinutes)
@@ -177,20 +180,6 @@ export async function getUniqueDatesWithApplications() {
     });
 }
 
-
-// Получаем все дни месяца в формате YYYY-MM-DD
-function getAllDaysInMonth(year, month) {
-    const date = new Date(year, month, 1);
-    const days = [];
-
-    while (date.getMonth() === month) {
-        const day = date.toISOString().split('T')[0]; // Форматируем как YYYY-MM-DD
-        days.push(day);
-        date.setDate(date.getDate() + 1); // Переходим к следующему дню
-    }
-
-    return days;
-}
 
 // Основная функция для получения всех записей мастера на месяц
 export async function getScheduleForMasterInMonth(userId, year, month) {

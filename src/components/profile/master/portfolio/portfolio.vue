@@ -9,15 +9,12 @@
 
     <div v-else class="portfolio-item">
       <div v-if="portfolioItem">
-        <!-- Опыт мастера -->
-        <p><strong>Опыт:</strong> {{ portfolioItem.experience }}</p>
-
         <!-- Описание портфолио -->
         <p><strong>Описание:</strong> {{ portfolioItem.description }}</p>
 
         <!-- Фотографии -->
         <div class="portfolio-photos">
-          <img v-for="(photo, index) in portfolioItem.photos" :key="index" :src="getImageUrl(photo)" alt="Portfolio Image" />
+          <img v-for="(photo, index) in portfolioItem.photosAsList" :key="index" :src="getImageUrl(photo)" alt="Portfolio Image" />
         </div>
       </div>
     </div>
@@ -33,6 +30,13 @@
 
     <button v-if="this.portfolioItem != null" class="create-portfolio-button" @click="handlePortfolioDeleted">
       Удалить портфолио
+    </button>
+
+    <button
+        v-if="portfolioItem != null"
+        class="update-portfolio-button"
+        @click="goToUpdatePortfolio">
+      Обновить портфолио
     </button>
 
   </div>
@@ -64,6 +68,7 @@ export default {
   },
   async created() {
     await this.fetchPortfolio();
+    console.log(this.portfolioItem);
   },
   methods: {
     async handlePortfolioDeleted() {
@@ -77,8 +82,12 @@ export default {
         console.error(error);
       }
     },
-    handlePortfolioUpdated(updatedPortfolio) {
-      this.portfolioItem = updatedPortfolio;
+    goToUpdatePortfolio() {
+      if (this.portfolioItem && this.portfolioItem.id) {
+        this.$router.push(`/my-portfolio/update/${Number(this.portfolioItem.id)}`);
+      } else {
+        console.error('Portfolio ID отсутствует!');
+      }
     },
     openModal() {
       this.isModalVisible = true;
@@ -97,16 +106,29 @@ export default {
         console.error('Ошибка при получении портфолио:', error);
       }
     },
-    getImageUrl(photoBytes) {
-      const blob = new Blob([new Uint8Array(photoBytes)], { type: 'image/png' });
-      return URL.createObjectURL(blob);
+    getImageUrl(base64String) {
+      if (typeof base64String === 'string') {
+        return `data:image/png;base64,${base64String}`;
+      }
+      console.error('Invalid data format for image:', base64String);
+      return '';
     }
-
   }
 };
 </script>
 
 <style scoped>
+
+.profile-page{
+  background-color: #ffffff;
+  border-radius: 30px;
+  padding: 30px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 0 7px 0 #0000001F;
+  font-family: "SF Pro Text", sans-serif;
+}
+
 .create-portfolio-button {
   background-color: #4848a0;
   color: white;

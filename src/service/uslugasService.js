@@ -109,16 +109,41 @@ export async function updateService(usluga) {
         console.error("Токен отсутствует или истёк. Требуется авторизация.");
         throw new Error("Токен отсутствует или истёк. Требуется авторизация.");
     }
-    console.log(usluga)
+
+    if (usluga.slots && usluga.slots.length > 0) {
+        usluga.slots.forEach(slot => {
+            if (slot.time) {
+                // Проверяем, если в строке времени есть секунда
+                let timeParts = slot.time.split(':');
+
+                // Если секунда есть, оставляем её, если нет - добавляем
+                if (timeParts.length === 2) {
+                    slot.time = `${timeParts[0]}:${timeParts[1]}:00`;
+                } else {
+                    slot.time = `${timeParts[0]}:${timeParts[1]}:${timeParts[2]}`;
+                }
+            }
+        });
+    }
+
+    if (usluga.slots.length === 0) {
+        usluga.slots = null;
+    }
+
+    console.log(token);
+
+
+    console.log("before",usluga)
 
     try {
         const response = await axios.put(`http://localhost:8080/usluga/${usluga.id}`,
             usluga,
             {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: token,
                 },
             });
+        console.log("response",response.data)
         return( response.data );
     } catch (error){
         console.error('Ошибка при создании услуги:', error);

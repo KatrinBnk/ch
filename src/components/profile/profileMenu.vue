@@ -20,6 +20,7 @@ export default {
         { title: "Отзывы", route: "/reviews" },
         { title: "Статистика", route: "/statistics" },
         { title: "Услуги", route: "/my-uslugas" },
+        { title: "Портфолио", route: "/my-portfolio" },
         { title: "Настройки", route: "/settings" },
         { title: "Поддержка", route: "/support" }
       ]

@@ -9,6 +9,8 @@ import ProfilePage from "@/pages/profilePage.vue";
 import NotFoundPage from "@/pages/notFoundPage.vue";
 import UslugasPage from "@/pages/uslugasPage.vue";
 import {userIsAuthenticated} from "@/service/checkToken.js";
+import PortfolioPage from "@/components/profile/my-portfolioBlock.vue";
+import UpdatePortfolio from "@/components/profile/master/portfolio/UpdatePortfolio.vue";
 
 const routes = [
     { path: '/', component: MainPage },
@@ -17,6 +19,13 @@ const routes = [
     { path: '/schedule', component: SchedulePage },
     { path: '/profile', component: ProfilePage, meta: { requiresAuth: true } },
     { path: '/my-uslugas', component: UslugasPage, meta: { requiresAuth: true } },
+    { path: '/my-portfolio', component: PortfolioPage, meta: { requiresAuth: true } },
+    {
+        path: '/my-portfolio/update/:portfolioId',
+        component: UpdatePortfolio,
+        meta: { requiresAuth: true },
+        props: true,
+    },
     { path: '/:pathMatch(.*)*', component: NotFoundPage }
 ];
 

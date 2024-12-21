@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {isTokenExpired} from "@/service/checkToken.js";
+import {base64ToBlob} from "@/service/portfolioService.js"
 
 export async function getUser(userID) {
 
@@ -253,5 +254,40 @@ export async function getUserPhoto(userID) {
     } catch (error) {
         console.error('Ошибка при получении фотографии пользователя:', error.message);
         throw new Error('Не удалось получить фотографию пользователя. Проверьте соединение с сервером.');
+    }
+}
+
+export async function uploadUserPhoto(userID, profilePhoto){
+    const token = localStorage.getItem('token');
+
+    if (!token || isTokenExpired(token)) {
+        console.error("Токен отсутствует или истёк. Требуется авторизация.");
+        throw new Error("Токен отсутствует или истёк. Требуется авторизация.");
+    }
+
+    const formData = new FormData();
+
+    if (typeof profilePhoto === 'string') {
+        const blob = base64ToBlob(profilePhoto);
+        formData.append('file', blob, `photo.png`);
+    } else if (profilePhoto instanceof File) {
+        formData.append('file', profilePhoto);
+    } else {
+        console.warn(`Неизвестный формат данных: ${profilePhoto}`);
+    }
+
+    try {
+
+        const response = await axios.put(`http://localhost:8080/user/${userID}`, formData,
+            {
+                headers:{
+                    Authorization: token
+                }
+        })
+
+        return response.data;
+    } catch (error){
+        console.error(error);
+        return error;
     }
 }
