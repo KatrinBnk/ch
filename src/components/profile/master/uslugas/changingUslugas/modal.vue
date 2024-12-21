@@ -1,8 +1,8 @@
 <template>
-  <div v-if="isVisible" class="modal" @click.self="closeModal">
+  <div v-if="isVisible" class="modal" @click.self="$emit('close')">
     <div class="modal-content">
       <slot></slot>
-      <button @click="closeModal" class="close-btn">Закрыть</button>
+      <button @click="$emit('close')" class="close-btn">Закрыть</button>
     </div>
   </div>
 </template>
@@ -17,11 +17,6 @@ export default {
     modalType: {
       type: String,
       required: true
-    }
-  },
-  methods: {
-    closeModal() {
-      this.$emit('update:isVisible', false);
     }
   }
 }

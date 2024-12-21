@@ -4,7 +4,10 @@
     <button @click="openModal('create')">Добавить услугу</button>
 
     <!-- Модальные окна для создания, редактирования услуги и слотов -->
-    <Modal :isVisible="isModalOpen" @update:isVisible="isModalOpen = $event" :modalType="modalType">
+    <Modal :isVisible="isModalOpen"
+           @update:isVisible="isModalOpen = $event"
+           @close="closeModal"
+           :modalType="modalType">
       <UslugaForm
           :usluga="newUsluga"
           :categories="categories"
@@ -92,8 +95,10 @@ export default {
     },
 
     closeModal() {
+      console.log("here")
       this.isModalOpen = false;
       this.resetUsluga();
+      console.log(this.newUsluga);
     },
 
     editUsluga(usluga) {
@@ -128,6 +133,7 @@ export default {
           const createdUsluga = await createServiceByMasterID(userId, this.newUsluga);
           this.uslugas.push(createdUsluga);
           this.closeModal();
+          this.resetUsluga()
         } catch (error) {
           console.error(error);
         }
@@ -143,6 +149,7 @@ export default {
           await updateService(this.newUsluga);
           await this.fetchUslugas();
           this.closeModal();
+          this.resetUsluga();
         } catch (error) {
           console.log(error);
         }
@@ -192,6 +199,7 @@ export default {
   },
   created() {
     this.fetchUslugas();
+    this.resetUsluga();
 
     fetchCategories()
         .then(fetchedCategories => {

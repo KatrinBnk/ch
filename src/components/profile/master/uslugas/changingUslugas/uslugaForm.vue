@@ -38,6 +38,8 @@
             type="time"
             v-model="slot.time"
             :key="'slot-time-' + index"
+            min="08:00:00"
+            max="18:00:00"
             required
         />
 
