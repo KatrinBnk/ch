@@ -87,7 +87,6 @@ export async function getScheduleItemsForDay(userId, day) {
             },
         });
 
-        console.log(response);
 
         if (response.status === 200) {
             const applications = response.data;

@@ -51,7 +51,6 @@ export default {
       if (this.userID) {
         try {
           const profileImage = await getUserPhoto(this.userID);
-          console.log(profileImage);
           if (profileImage) {
             this.profilePhoto = profileImage;
           } else {
