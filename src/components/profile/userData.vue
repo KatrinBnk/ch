@@ -12,12 +12,22 @@
       <img src="@/assets/icons/edit-profile.svg" alt="Редактировать профиль" />
     </button>
 
+
     <!-- Модальное окно редактирования -->
     <div v-if="isEditModalVisible" class="edit-modal">
       <div class="modal-content">
         <h2>Обновить фотографию профиля</h2>
 
-        <form @submit.prevent="saveProfile">
+        <form>
+
+          <label>
+            Имя:
+            <input type="text" v-model="this.newData.name" required/>
+          </label>
+          <label>
+            Почта:
+            <input type="email" v-model="this.newData.email" required/>
+          </label>
 
           <label>
             Фотография:
@@ -34,7 +44,7 @@
           </div>
 
           <div class="modal-buttons">
-            <button type="submit">Сохранить</button>
+            <button type="submit" @click="saveUserData">Сохранить</button>
             <button type="button" @click="closeEditModal">Отмена</button>
           </div>
         </form>
@@ -46,7 +56,7 @@
 <script>
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
-import {getUserPhoto, uploadUserPhoto} from "@/service/userDataService.js";
+import {getUserPhoto, updateUserInfo, uploadUserPhoto} from "@/service/userDataService.js";
 import stuPhoto from "@/assets/content-img.png";
 
 export default {
@@ -66,6 +76,7 @@ export default {
       cropper: null,
       currentPhoto: null,
       croppedPhotoBase64: null,
+      newData: null
     };
   },
   async created() {
@@ -82,9 +93,11 @@ export default {
   methods: {
     openEditModal() {
       this.isEditModalVisible = true;
+      this.newData = { ...this.user };
     },
     closeEditModal() {
       this.isEditModalVisible = false;
+      this.newData = null;
     },
     openCropModal(event) {
       const file = event.target.files[0];
@@ -128,6 +141,15 @@ export default {
         alert("Не удалось обновить профиль. Попробуйте попытку позже.");
       }
     },
+    async saveUserData(){
+      try{
+        console.log("update")
+        await updateUserInfo(this.user.id, this.newData.name, this.newData.email);
+      } catch (error) {
+        console.error("Ошибка при обновлении профиля:", error);
+        alert("Не удалось обновить профиль. Попробуйте попытку позже.");
+      }
+    }
   },
 };
 </script>

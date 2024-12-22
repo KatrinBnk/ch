@@ -291,4 +291,28 @@ export async function uploadUserPhoto(userID, profilePhoto){
     }
 }
 
+export async function updateUserInfo(userID, userName, userEmail){
+    const token = localStorage.getItem('token');
 
+    if (!token || isTokenExpired(token)) {
+        console.error("Токен отсутствует или истёк. Требуется авторизация.");
+        throw new Error("Токен отсутствует или истёк. Требуется авторизация.");
+    }
+
+    try{
+
+        const response = await axios.put(`http://localhost:8080/user/${userID}`,
+            {
+                email: userEmail,
+                name: userName
+            },
+            {
+            headers: {
+                Authorization: token,
+            },
+        });
+
+    } catch (error){
+
+    }
+}
