@@ -104,10 +104,8 @@ export default {
       const userId = localStorage.getItem("userID");
       const uslugaId = this.selectedService.id;
 
-      console.log(this.selectedSlot);
       try {
-        //Запись по ID слота
-        const appointmentResponse = await makeAppointment(userId, this.selectedSlot.id);
+        const appointmentResponse = await makeAppointment(userId, uslugaId, this.selectedSlot);
         if (appointmentResponse) {
           alert("Вы успешно записались на услугу!");
           this.closeModal();

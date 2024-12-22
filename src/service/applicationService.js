@@ -2,9 +2,7 @@ import axios from 'axios';
 import {isTokenExpired} from "@/service/checkToken.js";
 import {fetchUslugas} from "@/service/uslugasService.js"
 
-
-// Запись по ID слота
-export async function makeAppointment(userID, slotID) {
+export async function makeAppointment(userID, uslugaID, slot) {
     const token = localStorage.getItem('token');
 
     if (!token || isTokenExpired(token)) {
@@ -15,7 +13,11 @@ export async function makeAppointment(userID, slotID) {
     console.log(slot);
 
     try {
-        const response = await axios.post(`http://localhost:8080/applications/${userID}/${slotID}`,
+        const response = await axios.post(`http://localhost:8080/applications/${userID}/${uslugaID}`,
+            {
+            date: slot.date,
+            time: slot.time
+            },
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
