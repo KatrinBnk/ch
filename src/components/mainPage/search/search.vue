@@ -24,8 +24,10 @@
           v-for="(service, index) in services"
           :key="index"
           :service="service"
+          :isFavorite="isFavorite(service.id)"
           @show-login-modal="showLoginModal"
           @show-service-details="showServiceDetails"
+          @update-favorites="toggleFavorite"
       />
     </div>
 
@@ -47,6 +49,8 @@ import Usluga from "@/components/mainPage/search/usluga.vue";
 import UslugaModal from "@/components/mainPage/search/uslugaModal.vue";
 import {filter2, filterServices} from "@/service/uslugasService.js";
 import { fetchCategories } from "@/service/categoryService.js"
+import {userIsAuthenticated} from "@/service/checkToken.js";
+import {getFavorites} from "@/service/favorite.js";
 
 export default {
   components: {
@@ -71,13 +75,30 @@ export default {
         "name": "Услуга 2",
         "description" : "Пример описания услуги."
       }
-      ]
+      ],
+      favoriteUslugas: [],
+      isAuthorized: false
     };
+  },
+  async created(){
+    this.isAuthorized = userIsAuthenticated();
+    this.favoriteUslugas = await getFavorites(localStorage.getItem("userID"));
   },
   async mounted() {
     await this.loadCategories();
+    this.favoriteUslugas = await getFavorites(localStorage.getItem("userID"));
   },
   methods: {
+    isFavorite(uslugaID){
+      return this.favoriteUslugas.includes(uslugaID);
+    },
+    async toggleFavorite(uslugaID, newState) {
+      if (newState) {
+        this.favoriteUslugas.push(uslugaID);
+      } else {
+        this.favoriteUslugas = this.favoriteUslugas.filter((id) => id !== uslugaID);
+      }
+    },
     async loadCategories() {
       try {
         const categories = await fetchCategories();

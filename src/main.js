@@ -11,6 +11,7 @@ import UslugasPage from "@/pages/uslugasPage.vue";
 import {userIsAuthenticated} from "@/service/checkToken.js";
 import PortfolioPage from "@/components/profile/my-portfolioBlock.vue";
 import UpdatePortfolio from "@/components/profile/master/portfolio/UpdatePortfolio.vue";
+import MyFavoritePage from "@/pages/myFavoritePage.vue";
 
 const routes = [
     { path: '/', component: MainPage },
@@ -26,6 +27,7 @@ const routes = [
         meta: { requiresAuth: true },
         props: true,
     },
+    { path: "/my-favorite", component: MyFavoritePage, meta: { requiresAuth: true } },
     { path: '/:pathMatch(.*)*', component: NotFoundPage }
 ];
 

@@ -19,7 +19,6 @@ export async function getUser(userID) {
             },
         });
 
-
         if (response.status === 200) {
             const userData = response.data;
 
@@ -291,3 +290,5 @@ export async function uploadUserPhoto(userID, profilePhoto){
         return error;
     }
 }
+
+

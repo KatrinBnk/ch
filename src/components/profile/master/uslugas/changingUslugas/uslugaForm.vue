@@ -38,8 +38,7 @@
             type="time"
             v-model="slot.time"
             :key="'slot-time-' + index"
-            min="08:00:00"
-            max="18:00:00"
+            @change="validateTime(index)"
             required
         />
 
@@ -64,6 +63,51 @@ export default {
     },
   },
   methods: {
+      validateTime(index) {
+        const selectedTime = this.usluga.slots[index].time;
+        const selectedDate = this.usluga.slots[index].date;
+
+        // Проверяем, заполнено ли время и дата
+        if (!selectedTime || !selectedDate) {
+          return;
+        }
+
+        // Разделяем часы и минуты выбранного времени
+        const [selectedHours, selectedMinutes] = selectedTime.split(':').map(Number);
+
+        // Вычисляем начало и конец нового слота
+        const newSlotStart = new Date(`${selectedDate}T${selectedTime}`);
+        const newSlotEnd = new Date(newSlotStart.getTime() + this.usluga.durationMinutes * 60000); // Длительность услуги в миллисекундах
+
+        // Проверяем пересечение с существующими слотами
+        for (let i = 0; i < this.usluga.slots.length; i++) {
+          if (i === index) continue; // Пропускаем текущий слот
+
+          const existingSlot = this.usluga.slots[i];
+          if (!existingSlot.date || !existingSlot.time) continue;
+
+          // Вычисляем начало и конец существующего слота
+          const existingSlotStart = new Date(`${existingSlot.date}T${existingSlot.time}`);
+          const existingSlotEnd = new Date(existingSlotStart.getTime() + this.usluga.durationMinutes * 60000);
+
+          // Проверяем пересечение
+          if (
+              (newSlotStart >= existingSlotStart && newSlotStart < existingSlotEnd) || // Новый слот начинается внутри существующего
+              (newSlotEnd > existingSlotStart && newSlotEnd <= existingSlotEnd) || // Новый слот заканчивается внутри существующего
+              (newSlotStart <= existingSlotStart && newSlotEnd >= existingSlotEnd) // Новый слот полностью охватывает существующий
+          ) {
+            alert(`Невозможно выбрать время: ${selectedTime}. Оно пересекается с уже существующим слотом на ${existingSlot.date} с ${existingSlot.time}.`);
+            this.usluga.slots[index].time = ''; // Сбрасываем неправильное время
+            return;
+          }
+        }
+
+        // Проверяем ограничения времени (с 08:00 до 19:00)
+        if (selectedHours < 8 || selectedHours > 19 || (selectedHours === 19 && selectedMinutes > 0)) {
+          alert('Выберите время между 08:00 и 19:00!');
+          this.usluga.slots[index].time = ''; // Сбрасываем неправильное время
+        }
+      },
     addSlot() {
       this.usluga.slots.push({ date: '', time: '' });
     },

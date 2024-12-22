@@ -23,7 +23,7 @@ export default {
         { title: "Портфолио", route: "/my-portfolio" },
         { title: "Настройки", route: "/settings" },
         { title: "Поддержка", route: "/support" },
-        { title: "Избранное", route: "/favorite" },
+        { title: "Избранное", route: "/my-favorite" },
       ]
     };
   },
