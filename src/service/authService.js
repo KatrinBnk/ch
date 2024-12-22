@@ -33,11 +33,18 @@ export async function loginUser(email, password) {
         } else {
             return {
                 success: false,
-                message: 'Ошибка авторизации. Проверьте логин и пароль.'
+                message: 'Ошибка авторизации. Проверьте почту и пароль.'
             };
         }
     } catch (error) {
         console.error('Ошибка при авторизации:', error);
+        if (error.response.status === 403) {
+            return {
+                success: false,
+                message: 'Введены неверные данные пользователя. Проверьте почту и пароль.',
+                code: 403
+            };
+        }
         return {
             success: false,
             message: 'Ошибка подключения к серверу. Попробуйте позже.',
