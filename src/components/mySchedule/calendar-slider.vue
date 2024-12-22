@@ -45,6 +45,7 @@ export default {
   },
   async mounted() {
     try {
+      await getHighlightedDatesForCurrentMonth(localStorage.getItem("userID"));
       this.highlightedDates = await getUniqueDatesWithApplications();
     } catch (error) {
       console.error("Ошибка при получении дат с записями:", error);
@@ -52,10 +53,8 @@ export default {
   },
   async created() {
     try {
-      // Получаем записи для текущего месяца
-      const applications = await getHighlightedDatesForCurrentMonth(localStorage.getItem("userID"));
+      await getHighlightedDatesForCurrentMonth(localStorage.getItem("userID"));
 
-      // Извлекаем уникальные даты для текущего месяца (например, формируем список всех дней с записями)
       this.highlightedDates = await getUniqueDatesWithApplications();
 
       console.log(this.highlightedDates); // Печатаем уникальные даты

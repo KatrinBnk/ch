@@ -90,13 +90,25 @@ export default {
         }
       });
     },
-    cancelAnAppointment(id){
-      if (canselAppointment(id)) {
-        alert("Запись успешно отменена");
-      } else{
-        alert("Удаление записи на услугу невозможно.")
+    cancelAnAppointment(id) {
+      const index = this.scheduleItems.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        try {
+          canselAppointment(id).then(() => {
+            alert("Запись успешно отменена");
+            this.scheduleItems.splice(index, 1);
+          }).catch(() => {
+            alert("Удаление записи на услугу невозможно.");
+          });
+        } catch (error) {
+          console.error("Ошибка при отмене записи:", error);
+          alert("Произошла ошибка. Попробуйте снова.");
+        }
+      } else {
+        alert("Запись не найдена.");
       }
     }
+
   },
   mounted() {
     this.updateImageHeight();

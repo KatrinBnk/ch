@@ -4,7 +4,7 @@ import { isTokenExpired } from '@/service/checkToken.js';
 const DB_NAME = 'scheduleDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'applicationsByDate';
-const TTL = 60000; // 1 мин
+const TTL = 60; // 1 мин
 
 function openDB() {
     return new Promise((resolve, reject) => {
@@ -67,33 +67,6 @@ async function getApplicationsForDayFromIndexDB(day) {
         };
     });
 }
-
-// Получаем все даты, у которых есть какие-то записи, фильтруя просроченные
-export async function getAllDatesWithApplications() {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-
-    return new Promise((resolve, reject) => {
-        const request = store.getAllKeys();
-        request.onsuccess = async () => {
-            const keys = request.result || [];
-            const validDates = [];
-            for (let day of keys) {
-                const applications = await getApplicationsForDayFromIndexDB(day);
-                if (applications && applications.length > 0) {
-                    const formattedDate = new Date(day).toISOString().split('T')[0];
-                    validDates.push(formattedDate); // Форматируем дату
-                }
-            }
-            resolve(validDates);
-        };
-        request.onerror = () => {
-            reject('Ошибка при получении списка дат из IndexedDB');
-        };
-    });
-}
-
 
 // Основная функция, которая получает расписание с сервера и кэширует в IndexedDB
 export async function getScheduleItemsForDay(userId, day) {
@@ -179,7 +152,6 @@ export async function getUniqueDatesWithApplications() {
         };
     });
 }
-
 
 // Основная функция для получения всех записей мастера на месяц
 export async function getScheduleForMasterInMonth(userId, year, month) {

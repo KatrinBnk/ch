@@ -103,8 +103,8 @@ export default {
         }
 
         // Проверяем ограничения времени (с 08:00 до 19:00)
-        if (selectedHours < 8 || selectedHours > 19 || (selectedHours === 19 && selectedMinutes > 0)) {
-          alert('Выберите время между 08:00 и 19:00!');
+        if (selectedHours < 8 || selectedHours > 18 || (selectedHours === 18 && selectedMinutes > 0)) {
+          alert('Выберите время между 08:00 и 18:00!');
           this.usluga.slots[index].time = ''; // Сбрасываем неправильное время
         }
       },
