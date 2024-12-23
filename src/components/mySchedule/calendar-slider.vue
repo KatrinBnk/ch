@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import {getHighlightedDatesForCurrentMonth, getUniqueDatesWithApplications} from '@/service/scheduleService.js';
+import {getHighlightedDatesForCurrentMonth} from '@/service/scheduleService.js';
 
 export default {
   props: {
@@ -45,19 +45,15 @@ export default {
   },
   async mounted() {
     try {
-      await getHighlightedDatesForCurrentMonth(localStorage.getItem("userID"));
-      this.highlightedDates = await getUniqueDatesWithApplications();
+      this.highlightedDates = await getHighlightedDatesForCurrentMonth(localStorage.getItem("userID"));
     } catch (error) {
       console.error("Ошибка при получении дат с записями:", error);
     }
   },
   async created() {
     try {
-      await getHighlightedDatesForCurrentMonth(localStorage.getItem("userID"));
-
-      this.highlightedDates = await getUniqueDatesWithApplications();
-
-      console.log(this.highlightedDates); // Печатаем уникальные даты
+      this.highlightedDates = await getHighlightedDatesForCurrentMonth(localStorage.getItem("userID"));
+      console.log(this.highlightedDates);
     } catch (error) {
       console.error("Ошибка при получении расписания за месяц:", error);
     }

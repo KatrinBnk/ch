@@ -125,33 +125,6 @@ function calculateEndTime(startTimeISO, durationMinutes) {
     return endDate.toISOString(); // Возвращаем время окончания
 }
 
-// Функция для получения уникальных дат, на которые есть записи
-export async function getUniqueDatesWithApplications() {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-
-    return new Promise((resolve, reject) => {
-        const request = store.getAllKeys();
-        request.onsuccess = async () => {
-            const keys = request.result || [];
-            const uniqueDates = new Set(); // Используем Set для уникальности
-
-            for (let day of keys) {
-                const applications = await getApplicationsForDayFromIndexDB(day);
-                if (applications && applications.length > 0) {
-                    const formattedDate = new Date(day).toISOString().split('T')[0];
-                    uniqueDates.add(formattedDate); // Добавляем уникальную дату
-                }
-            }
-            resolve(Array.from(uniqueDates)); // Преобразуем Set обратно в массив
-        };
-        request.onerror = () => {
-            reject('Ошибка при получении списка уникальных дат из IndexedDB');
-        };
-    });
-}
-
 // Основная функция для получения всех записей мастера на месяц
 export async function getScheduleForMasterInMonth(userId, year, month) {
     console.log(`Запрос расписания для мастера ${userId} на месяц ${year}-${month + 1}`);
@@ -200,8 +173,8 @@ export async function getScheduleForMasterInMonth(userId, year, month) {
         // Возвращаем все записи для данного месяца
         return allApplications.map(application => ({
             uslugaName: application.usluga.name,
-            startTime: `${application.date}T${application.time}`,
-            endTime: calculateEndTime(`${application.date}T${application.time}`, application.usluga.durationMinutes)
+            startTime: `${formatDateToYYYYMMDD(application.date)}T${application.time}`,
+            endTime: calculateEndTime(`${formatDateToYYYYMMDD(application.date)}T${application.time}`, application.usluga.durationMinutes)
         }));
     } catch (error) {
         console.error('Ошибка при запросе расписания:', error.message);
@@ -218,7 +191,6 @@ export async function getHighlightedDatesForCurrentMonth(userId) {
     try {
         const applications = await getScheduleForMasterInMonth(userId, currentYear, currentMonth);
 
-        // Извлекаем уникальные даты для текущего месяца
         const highlightedDates = applications.map(application => application.startTime.split('T')[0]);
 
         // Убираем повторяющиеся даты
@@ -227,4 +199,20 @@ export async function getHighlightedDatesForCurrentMonth(userId) {
         console.error("Ошибка при получении расписания за месяц:", error);
         return [];
     }
+}
+
+function formatDateToYYYYMMDD(date) {
+    const d = new Date(date);
+
+    // Проверка корректности даты
+    if (isNaN(d.getTime())) {
+        console.error("Некорректный формат даты:", date);
+        return null;
+    }
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0'); // Месяцы с 0 по 11
+    const day = String(d.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
 }

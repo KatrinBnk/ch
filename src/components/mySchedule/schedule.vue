@@ -5,8 +5,11 @@
                      :selected-date="selectedDate"
                      :today="today"
                      @date-selected="onDateSelected"
+
     />
-    <calendar-timeline class="timeline" :schedule-items="scheduleItems" />
+    <calendar-timeline class="timeline"
+                       :schedule-items="scheduleItems"
+    />
   </div>
 </template>
 
@@ -72,7 +75,6 @@ export default {
 
       return `${year}-${month}-${day}`;
     }
-
   }
 
 }
