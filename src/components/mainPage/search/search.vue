@@ -16,6 +16,7 @@
     </div>
 
     <!-- Отображение списка услуг -->
+    <h1 v-if="services.length<1" class="not-found-uslugas"> Услуги по запросу не были найдены! </h1>
     <div
         class="services-list"
         :class="{ 'single-item': services.length < 3 }"
@@ -133,10 +134,6 @@ export default {
           maxPrice: this.maxPrice
         });
 
-
-        // TODO: заглушка (УБРАТЬ) стоит по просьбе Реналя для примера
-        this.services = servicesData.length > 0 ? servicesData : this.stubUslugas;
-
       } catch (error) {
         console.error("Ошибка загрузки услуг:", error);
       }
@@ -236,6 +233,14 @@ export default {
   font-family: 'SF Pro Text', sans-serif;
   font-weight: 600;
   margin-bottom: 20px;
+}
+
+.not-found-uslugas{
+  margin-top: 30px;
+  font-size: 30px;
+  font-family: 'SF Pro Text', sans-serif;
+  font-weight: 600;
+  text-align: center;
 }
 
 .services-list {
