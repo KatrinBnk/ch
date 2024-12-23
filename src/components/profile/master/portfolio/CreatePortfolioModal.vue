@@ -11,8 +11,8 @@
 
         <!-- Поле для загрузки фото -->
         <div class="form-group">
-          <label for="photo">Фото (PNG, одно фото за раз):</label>
-          <input type="file" @change="openCropModal" accept="image/png" />
+          <label for="photo">Фото (хотя бы одно):</label>
+          <input type="file" @change="openCropModal" accept="image/png" required />
         </div>
 
         <!-- Превью добавленных фото -->
@@ -23,6 +23,7 @@
                 v-for="(photo, index) in previewPhotos"
                 :key="index"
                 class="photo-item"
+
             >
               <img :src="photo" alt="Photo Preview" />
             </div>
@@ -136,17 +137,18 @@ export default {
         // Данные для отправки
         const dataToSend = {
           description: this.portfolioData.description,
-          photos: this.portfolioData.photos, // Обработанные фотографии
+          photos: this.portfolioData.photos,
         };
 
         await createPortfolio(this.userId, dataToSend);
 
         this.$emit('portfolioCreated');
+        alert("Портфолио было успешно создано!")
         this.isSuccessMessage = true;
 
-        setTimeout(() => {
-          this.closeModal();
-        }, 2000);
+        this.closeModal();
+
+
       } catch (error) {
         console.error('Ошибка при создании портфолио:', error);
         this.errorMessage = 'Произошла ошибка при создании портфолио. Попробуйте снова.';
@@ -180,6 +182,7 @@ export default {
 
 .form-group {
   margin-bottom: 15px;
+  display: grid;
 }
 
 .photo-preview {

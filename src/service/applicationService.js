@@ -3,6 +3,7 @@ import {isTokenExpired} from "@/service/checkToken.js";
 import {fetchUslugas} from "@/service/uslugasService.js"
 
 // Запись по ID слота
+//TODO: добавить передачу id услуги, на которую происходит запись (по аналогии с slotID)
 export async function makeAppointment(userID, slotID) {
     const token = localStorage.getItem('token');
 

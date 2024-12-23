@@ -14,6 +14,8 @@ export const createPortfolio = async (userId, portfolioData) => {
         throw new Error("Токен отсутствует или истёк. Требуется авторизация.");
     }
 
+
+
     try {
         // Создаём пустое портфолио
         const response = await axios.post(
