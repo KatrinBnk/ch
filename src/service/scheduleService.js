@@ -46,28 +46,6 @@ async function storeApplicationsInIndexDB(day, applications) {
     });
 }
 
-// Получаем записи для конкретной даты из IndexedDB (если срок не истёк)
-async function getApplicationsForDayFromIndexDB(day) {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-
-    return new Promise((resolve, reject) => {
-        const request = store.get(day);
-        request.onsuccess = () => {
-            const data = request.result;
-            if (data && data.expiry > Date.now()) {
-                resolve(data.applications);
-            } else {
-                resolve(null);
-            }
-        };
-        request.onerror = () => {
-            reject('Ошибка при получении данных из IndexedDB');
-        };
-    });
-}
-
 // Основная функция, которая получает расписание с сервера и кэширует в IndexedDB
 export async function getScheduleItemsForDay(userId, day) {
     console.log(`Запрос расписания для пользователя ${userId} на день ${day}`);

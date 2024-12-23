@@ -15,7 +15,6 @@ export async function filterServices({ selectedCategories, searchQuery, location
         // Получаем услуги с сервера (по локации или все услуги)
         const response = await axios.get(url);
         const services = response.data || [];
-        console.log(services);
 
         // Фильтрация услуг по категориям, цене и поисковому запросу
         return services.filter(service => {
@@ -130,11 +129,6 @@ export async function updateService(usluga) {
         usluga.slots = null;
     }
 
-    console.log(token);
-
-
-    console.log("before",usluga)
-
     try {
         const response = await axios.put(`http://localhost:8080/usluga/${usluga.id}`,
             usluga,
@@ -143,7 +137,6 @@ export async function updateService(usluga) {
                     Authorization: token,
                 },
             });
-        console.log("response",response.data)
         return( response.data );
     } catch (error){
         console.error('Ошибка при создании услуги:', error);

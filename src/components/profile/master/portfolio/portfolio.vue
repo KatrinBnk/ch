@@ -68,7 +68,6 @@ export default {
   },
   async created() {
     await this.fetchPortfolio();
-    console.log(this.portfolioItem);
   },
   methods: {
     async handlePortfolioDeleted() {

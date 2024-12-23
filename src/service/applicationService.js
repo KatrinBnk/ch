@@ -3,7 +3,6 @@ import {isTokenExpired} from "@/service/checkToken.js";
 import {fetchUslugas} from "@/service/uslugasService.js"
 
 // Запись по ID слота
-//TODO: добавить передачу id услуги, на которую происходит запись (по аналогии с slotID)
 export async function makeAppointment(userID, slotID) {
     const token = localStorage.getItem('token');
 
@@ -43,7 +42,6 @@ export async function canselAppointment(appID) {
             }
         })
 
-        console.log(response);
         return true;
     } catch (error){
         console.error(error);
@@ -62,11 +60,8 @@ export async function getFreeSlots(uslugaID) {
     const allUslugas = await fetchUslugas();
 
     const currentUsluga = allUslugas.filter(usluga => usluga.id === uslugaID)[0];
-    console.log(currentUsluga);
 
-    const availableSlots = currentUsluga.slots.filter(slot => slot.available);
-    console.log(availableSlots)
-    return availableSlots;
+    return currentUsluga.slots.filter(slot => slot.available);
 }
 
 

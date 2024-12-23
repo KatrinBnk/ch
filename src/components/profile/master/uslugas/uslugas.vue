@@ -86,7 +86,6 @@ export default {
       } catch (error) {
         console.error('Ошибка при получении услуг:', error);
       }
-      console.log(this.uslugas);
     },
 
     openModal(type) {
@@ -200,7 +199,6 @@ export default {
         .then(fetchedCategories => {
           const defaultCategories = this.categories; // Сохранение дефолтных категорий
           this.categories = Array.from(new Set([...defaultCategories, ...fetchedCategories])); // Уникальный список категорий
-          console.log(this.categories);
         })
         .catch(error => {
           console.error("Ошибка при загрузке категорий:", error);

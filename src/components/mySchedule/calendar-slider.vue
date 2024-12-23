@@ -53,7 +53,6 @@ export default {
   async created() {
     try {
       this.highlightedDates = await getHighlightedDatesForCurrentMonth(localStorage.getItem("userID"));
-      console.log(this.highlightedDates);
     } catch (error) {
       console.error("Ошибка при получении расписания за месяц:", error);
     }

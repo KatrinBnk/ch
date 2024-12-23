@@ -7,8 +7,6 @@ export async function loginUser(email, password) {
             password: password,
         });
 
-        console.log(response);
-
         if (response.status === 200 && response.headers.authorization) {
             const token = response.headers.authorization;
             localStorage.setItem('token', token);
@@ -19,7 +17,6 @@ export async function loginUser(email, password) {
                 },
             });
 
-            console.log(userResponse);
 
             if (userResponse.status === 200 && userResponse.data) {
                 const userId = userResponse.data.id;
