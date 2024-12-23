@@ -11,10 +11,9 @@ export async function makeAppointment(userID, slotID) {
         throw new Error("Токен отсутствует или истёк. Требуется авторизация.");
     }
 
-    console.log(slot);
-
     try {
         const response = await axios.post(`http://localhost:8080/applications/${userID}/${slotID}`,
+            {},
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
