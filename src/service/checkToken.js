@@ -45,7 +45,7 @@ export function userIsAuthenticated() {
     if (userID === '0') {
         return true;
     }
-    if (!token || isTokenExpired(token)) {
+    if (!token || isTokenExpired(token) || !userID) {
         localStorage.removeItem('token');
         localStorage.removeItem('userID');
         return false;
