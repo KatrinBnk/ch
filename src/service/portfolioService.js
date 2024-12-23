@@ -7,14 +7,10 @@ const token = localStorage.getItem('token');
 
 export const createPortfolio = async (userId, portfolioData) => {
     const token = localStorage.getItem('token');
-    console.log(token);
-    console.log(portfolioData);
     if (!token || isTokenExpired(token)) {
         console.error("Токен отсутствует или истёк. Требуется авторизация.");
         throw new Error("Токен отсутствует или истёк. Требуется авторизация.");
     }
-
-
 
     try {
         // Создаём пустое портфолио
@@ -46,7 +42,6 @@ export const updatePortfolio = async (portfolioId, portfolioData) => {
         throw new Error("Токен отсутствует или истёк. Требуется авторизация.");
     }
 
-    console.log(portfolioData);
 
     const formData = new FormData();
     formData.append('description', portfolioData.description);
@@ -63,8 +58,6 @@ export const updatePortfolio = async (portfolioId, portfolioData) => {
             console.warn(`Неизвестный формат данных: ${photo}`);
         }
     });
-
-    console.log("formdata", formData);
 
     try {
         const responseToUpdate = await axios.put(

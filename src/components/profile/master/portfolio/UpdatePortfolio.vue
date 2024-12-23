@@ -19,7 +19,8 @@
             v-model="portfolioData.description"
             placeholder="Введите описание портфолио"
             rows="4"
-        ></textarea>
+            required
+        />
       </div>
 
       <!-- Список существующих фотографий -->
@@ -111,13 +112,13 @@ export default {
     };
   },
   async created() {
-    await this.fetchPortfolio();
+    await this.fetchPortfolio(true);
   },
   methods: {
-    async fetchPortfolio() {
+    async fetchPortfolio(type) {
       try {
         const portfolio = await getPortfolioByMasterId(Number(localStorage.getItem('userID')));
-        this.portfolioData.description = portfolio.description;
+        if (type) this.portfolioData.description = portfolio.description;
         this.portfolioData.photosAsList = portfolio.photosAsList || [];
       } catch (error) {
         console.error('Ошибка при загрузке портфолио:', error);
@@ -175,7 +176,11 @@ export default {
           ...this.portfolioData.newPhotos,    // Новые фотографии
         ];
 
-        console.log(allPhotos)
+        if (allPhotos.length === 0) {
+          alert("В портфолио обязательно должно быть хотя бы одно фото!")
+          await this.fetchPortfolio(false); //сбрасываю фотки, но оставляю описание
+          return;
+        }
 
         // Формируем данные для обновления
         const portfolioData = {
@@ -183,19 +188,26 @@ export default {
           photos: allPhotos,
         };
 
-
-
         await updatePortfolio(this.portfolioId, portfolioData);
 
+        await this.resetData();
         alert('Портфолио успешно обновлено!');
+
       } catch (error) {
         console.error('Ошибка при обновлении портфолио:', error);
-        alert('Не удалось обновить портфолио. Попробуйте снова.');
+        alert('Не удалось обновить портфолио. В портфолио обязательно должны присутствовать: описание и одна (или более) фотографий ');
       }
     },
     handleCancel() {
       this.$router.push('/my-portfolio');
     },
+    async resetData(){
+      this.previewNewPhotos = [];
+      this.showCropModal = false;
+      this.cropper = null;
+      this.currentPhoto = null;
+      await this.fetchPortfolio(true);
+    }
   },
 };
 </script>
