@@ -31,6 +31,7 @@
             :key="'slot-date-' + index"
             :value="formatDateForInput(slot.date)"
             required
+            @blur="validateDate(index)"
         />
 
         <label :for="'slot-time-' + index">Время</label>
@@ -38,7 +39,7 @@
             type="time"
             v-model="slot.time"
             :key="'slot-time-' + index"
-            @change="validateTime(index)"
+            @blur="validateTime(index)"
             required
         />
 
@@ -63,51 +64,57 @@ export default {
     },
   },
   methods: {
-      validateTime(index) {
+    validateTime(index) {
         const selectedTime = this.usluga.slots[index].time;
         const selectedDate = this.usluga.slots[index].date;
 
-        // Проверяем, заполнено ли время и дата
         if (!selectedTime || !selectedDate) {
           return;
         }
 
-        // Разделяем часы и минуты выбранного времени
         const [selectedHours, selectedMinutes] = selectedTime.split(':').map(Number);
 
-        // Вычисляем начало и конец нового слота
         const newSlotStart = new Date(`${selectedDate}T${selectedTime}`);
         const newSlotEnd = new Date(newSlotStart.getTime() + this.usluga.durationMinutes * 60000); // Длительность услуги в миллисекундах
 
-        // Проверяем пересечение с существующими слотами
         for (let i = 0; i < this.usluga.slots.length; i++) {
-          if (i === index) continue; // Пропускаем текущий слот
+          if (i === index) continue;
 
           const existingSlot = this.usluga.slots[i];
           if (!existingSlot.date || !existingSlot.time) continue;
 
-          // Вычисляем начало и конец существующего слота
           const existingSlotStart = new Date(`${existingSlot.date}T${existingSlot.time}`);
           const existingSlotEnd = new Date(existingSlotStart.getTime() + this.usluga.durationMinutes * 60000);
 
-          // Проверяем пересечение
           if (
               (newSlotStart >= existingSlotStart && newSlotStart < existingSlotEnd) || // Новый слот начинается внутри существующего
               (newSlotEnd > existingSlotStart && newSlotEnd <= existingSlotEnd) || // Новый слот заканчивается внутри существующего
               (newSlotStart <= existingSlotStart && newSlotEnd >= existingSlotEnd) // Новый слот полностью охватывает существующий
           ) {
             alert(`Невозможно выбрать время: ${selectedTime}. Оно пересекается с уже существующим слотом на ${existingSlot.date} с ${existingSlot.time}.`);
-            this.usluga.slots[index].time = ''; // Сбрасываем неправильное время
+            this.usluga.slots[index].time = '';
             return;
           }
         }
 
-        // Проверяем ограничения времени (с 08:00 до 19:00)
         if (selectedHours < 8 || selectedHours > 18 || (selectedHours === 18 && selectedMinutes > 0)) {
           alert('Выберите время между 08:00 и 18:00!');
-          this.usluga.slots[index].time = ''; // Сбрасываем неправильное время
+          this.usluga.slots[index].time = '';
         }
       },
+    validateDate(index) {
+      const selectedDate = this.usluga.slots[index].date;
+      const today = new Date();
+      const selectedSlotDate = new Date(selectedDate);
+
+      today.setHours(0, 0, 0, 0);
+      selectedSlotDate.setHours(0, 0, 0, 0);
+
+      if (selectedSlotDate < today) {
+        alert('Вы не можете выбрать прошедшую дату!');
+        this.usluga.slots[index].date = '';
+      }
+    },
     addSlot() {
       this.usluga.slots.push({ date: '', time: '' });
     },
@@ -118,16 +125,12 @@ export default {
 
     formatDateForInput(date) {
       if (!date) return '';
-      // Преобразуем дату в формат YYYY-MM-DD для input type="date"
       const newDate = new Date(date);
       return newDate.toISOString().split('T')[0];
     },
-
     updateSlotDate(index, event) {
-      // Обновляем модель даты на основании введенного значения
       this.usluga.slots[index].date = event.target.value;
     },
-
     validateForm() {
       const isValid = this.usluga.name && this.usluga.description && this.usluga.location &&
           this.usluga.price && this.usluga.durationMinutes && this.usluga.category;

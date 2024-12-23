@@ -95,12 +95,9 @@ export default {
     },
 
     closeModal() {
-      console.log("here")
       this.isModalOpen = false;
       this.resetUsluga();
-      console.log(this.newUsluga);
     },
-
     editUsluga(usluga) {
       this.newUsluga = {...usluga};
       this.newUsluga.slots.forEach(slot => {
@@ -129,7 +126,6 @@ export default {
 
         const userId = localStorage.getItem('userID');
         try {
-          console.log(this.newUsluga);
           const createdUsluga = await createServiceByMasterID(userId, this.newUsluga);
           this.uslugas.push(createdUsluga);
           this.closeModal();
@@ -145,7 +141,6 @@ export default {
         this.formatTimeForServer(this.newUsluga.slots);
 
         try {
-          console.log("update: " ,this.newUsluga);
           await updateService(this.newUsluga);
           await this.fetchUslugas();
           this.closeModal();
