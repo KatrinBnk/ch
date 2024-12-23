@@ -80,8 +80,6 @@ export default {
     };
   },
   async created() {
-
-    console.log(localStorage.getItem("userID"));
     this.userRole = this.user.role === "master" ? "мастер" : "пользователь";
 
     try {
