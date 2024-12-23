@@ -82,6 +82,8 @@ export default {
   async created() {
     this.userRole = this.user.role === "master" ? "мастер" : "пользователь";
 
+    console.log(localStorage.getItem("userID"));
+
     try {
       const profileImage = await getUserPhoto(this.user.id);
       this.userPhoto = profileImage ? profileImage : stuPhoto;

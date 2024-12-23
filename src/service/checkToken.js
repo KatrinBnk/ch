@@ -42,9 +42,9 @@ export function isTokenExpired(token) {
 export function userIsAuthenticated() {
     const token = localStorage.getItem('token');
     const userID = localStorage.getItem('userID');
-    if (userID === '0') {
-        return true;
-    }
+
+    console.log(userID);
+
     if (!token || isTokenExpired(token) || !userID) {
         localStorage.removeItem('token');
         localStorage.removeItem('userID');
